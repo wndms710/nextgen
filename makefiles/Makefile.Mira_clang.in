@@ -1,0 +1,32 @@
+# Makefile.mira
+# makefile for bgq of alcf
+
+AR=		powerpc64-bgq-linux-ar rv
+RANLIB= 	powerpc64-bgq-linux-ar -ts
+EXTRACT =       powerpc64-bgq-linux-ar -x
+
+CXX=	 	mpicxx	
+CXX_NO_MPI=     g++
+
+STITCH_OPT_FLAGS=	-O2
+CHARLES_OPT_FLAGS=	-O3 -ffast-math -freciprocal-math -funroll-loops
+CORE_OPT_FLAGS=		-O3
+
+
+#CXXFLAGS= 	-O3 -ffast-math -freciprocal-math -funroll-loops 
+#CXXFLAGS +=	-O2
+
+CXXFLAGS =	-DNO_CTI_PREFETCH
+
+
+PNG_INC = -I/home/stbose/libs/libpng_clang/include -I/home/stbose/libs/libz_install/include -DWITH_PNG
+#PNG_LIB = -L/home/stbose/libs/libpng_clang/lib -L/home/stbose/libs/libz_install/lib -lpng16 -lz
+PNG_LIB = /home/stbose/libs/libpng_clang/lib/libpng16.a /home/stbose/libs/libz_install/lib/libz.a 
+
+
+CXXFLAGS += $(PNG_INC) -DWITH_PNG 
+CXXFLAGS +=	-DWITH_SHM
+CLIBS += $(PNG_LIB)
+
+CXXFLAGS_NO_MPI=	$(CXXFLAGS)
+CLIBS_NO_MPI += 	$(PNG_LIB)

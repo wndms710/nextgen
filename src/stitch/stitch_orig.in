@@ -1,0 +1,141 @@
+#
+VERBOSE
+#WRITE_POINTS_FROM_FLUENT cartesian_64_200_4.cas
+#PART main SURF SBIN ../surfer/cartesian_64_200_4.sbin PTS PBIN cartesian_64_200_4.pbin
+#NSMOOTH 0
+
+#PART main SURF BIN /Users/civey/runs/cti/preccinsta_small/preccinsta_final.sbin PTS HCP
+#HCP_DELTA 0.005
+#HCP_WINDOW FAZONE preccinsta_clean.stl LEVEL 1 NLAYERS 5
+#WRITE_RESTART preccinsta.mles
+#INTERACTIVE
+
+# debug cvd processing algorithm...
+#CVD_DEBUG cvd_debug/cvd_debug_ngr_large_copy.bin
+#CVD_DEBUG cvd_debug/cvd_debug_wtf_copy.bin
+#CVD_DEBUG cvd_debug/cvd_debug_gepw.bin
+
+#CVD_DEBUG cvd.000097.dat
+#CVD_DEBUG cvd.000091.dat
+#CVD_DEBUG cvd.000079.dat
+
+#VD_DEBUG vd.bin
+
+# all of these are acceptable syntax...
+#WRITE_RESTART_V5 # this will be depricated in the next version
+#WRITE_RESTART
+#WRITE_RESTART my_restart.mles
+#WRITE_RESTART NO_SURFACE
+#WRITE_RESTART my_restart.mles NO_SURFACE
+#WRITE_RESTART NO_SURFACE blah.mles
+
+#WRITE_RESTART 1DGrid_per.mles
+
+#WRITE_RESTART_V4
+#WRITE_RESTART_V3
+
+# ================
+# parts
+# ================
+
+#PART main SURF BIN assets/multi_vor.sbin SCALE_Y 0.1 PTS HCP
+#MOTION_HACK X0 0.0 Y0 0.0 Z0 0.0 R0 0.5 PHI 0.03456789 THETA 0.03456789 PSI 0.03456789 NSTEPS 1
+#PART main SURF BIN assets/multi_vor.sbin PTS HCP
+#HCP_DELTA 0.1
+#HCP_DELTA 1
+#PART main SURF SIMPLE_ANNULUS 0 0 0 0.25 0.5 1 0 0 0.75 1.0 PTS HCP HCP_DELTA 0.05
+#INTERACTIVE
+#NSMOOTH 0
+#WRITE_CHECK
+
+#WRITE_POINTS_FROM_FLUENT /Users/civey/runs/cti/fluent/baseline_ascii.cas
+#PART main SURF SBIN /Users/civey/runs/cti/fluent/baseline_ascii_flipped.sbin PTS PBIN /Users/civey/runs/cti/fluent/baseline_ascii.pbin
+#WRITE_RESTART /Users/civey/runs/cti/fluent/baseline_ascii.mles
+
+#PART main SURF BIN assets/multi_vor.sbin SCALE 1 2 1 PTS HCP HCP_DELTA 0.2
+#PART main SURF BIN multi_vor.single_zone.sbin SCALE 1 1 1 PTS HCP HCP_DELTA 0.2
+
+#PART main SURF=SBIN periodic_box_rot1.sbin PTS HCP
+#PART main SURF=SIMPLE_BOX -1 1 -1 1 -1 1 PTS PBIN check.pbin
+PART main SURF=SIMPLE_BOX -1 1 -1 1 -1 1 PTS HCP
+HCP_DELTA 0.2
+WRITE_CHECK
+
+#ROTATE_MLES AXIS 1 1 1 POINT 1 1 1 ANGLE -10
+#HCP_WINDOW SBIN box.sbin LEVEL 2 NLAYERS 10
+#INTERACTIVE
+#HCP_PACKING ONE
+#HCP_PACKING ROOT2
+#HCP_PACKING ROOT3
+#WRITE_CHECK
+
+#DEFINE LX 6
+#DEFINE NX 50
+#DEFINE R 0.5
+#DEFINE NPTS 100
+#DEFINE DELTA ($(LX)/$(NX))
+#PART main SURF SIMPLE_PIPE 0 0 0 $(LX) 0 0 $(R) PERIODIC NCIRC $(NPTS) PTS HCP
+#WRITE_CHECKS
+#HCP_WINDOW FAZONE wall LEVEL 1 NLAYERS 6
+#HCP_WINDOW FAZONE wall LEVEL 2 NLAYERS 5
+#HCP_WINDOW FAZONE wall LEVEL 3 NLAYERS 4
+#HCP_DELTA $(DELTA)
+
+#WRITE_IMAGE NAME iso_pipe GEOM PLANE 2 1.4 1.0 1 0.7 0.5 SIZE 1000 1000 VAR mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME x_pipe GEOM PLANE 2 0 0 1 0 0 SIZE 1000 1000 VAR mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME y_pipe GEOM PLANE 0 2 0 0 1 0 SIZE 1000 1000 VAR mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME z_pipe GEOM PLANE 0 0 2 0 0 1 SIZE 1000 1000 VAR mesh MESH_ON_SURFACE
+
+#HCP_DELTA (0.1*sqrt(2.0))
+
+#PART main SURF=SIMPLE_BOX -1 1 -1 1 -1 1 PTS HCP
+#HCP_DELTA 0.1
+
+#NSMOOTH 50
+#LLOYD_ITERATE_EVERYWHERE TRUE
+#NSMOOTH 0
+#PART main SURF=SIMPLE_BOX -1 1 -1 1 -1 1  PTS CART 4 2 2
+#PART main SURF BIN cyly_100.sbin SCALE_Y 10 PTS HCP HCP_DELTA 0.5
+
+#PART main SURF=SIMPLE_BOX -1 1 -0.01 0.01 -0.01 0.01  PTS CART 100 1 1
+#PART main SURF BIN assets/multi_vor.sbin PTS HCP HCP_DELTA 0.05
+#HCP_WINDOW BOX -0.5 0.15 -0.5 0.5 -0.5 0.25 LEVEL=2 NLAYERS=5
+
+#HCP_WINDOW FAZONE x0,x1,z0,z1 LEVEL=2 NLAYERS=5
+
+#PART main SURF BIN assets/multi_vor.sbin PTS HCP HCP_DELTA 0.15
+#PART main SURF BIN assets/multi_vor.sbin PTS HCP HCP_DELTA 0.6
+
+# BOOL part point tie-breaking is based on the order listed: here box wins
+#PART main SURF_AND_PTS=BOOL box,plate MPOINT 1 0 1
+# SIMPLE_BOX <x0> <x1> <y0> <y1> <z0> <z1> MSH=CART <nx> <ny> <nz> [STRETCH_X=<factor>] [STRETCH_Y=<factor>] [STRETCH_Z=<factor>]
+#PART plate SURF=SIMPLE_BOX -2 0.5 -0.2 0.2 -0.005 0.005 FLIP ROTATE_Y 5.9 TRANSLATE 0 0 0.01
+#PART box SURF=SIMPLE_BOX -1 1 -0.1 0.1 -1 1 PTS=CART 12 1 18
+
+#WRITE_SURFACE_TECPLOT
+
+# ================
+# mesh controls
+# ================
+
+#NSMOOTH 5
+#SMOOTH_LIMIT 0.5
+#SMOOTH_RELAX 0.1
+#SMOOTH_RELAX 1 0 1
+
+# smoothing windows...
+#SMOOTH GEOM=BLAYER x0,x1,z0,z1 NLAYERS=3 NITER=2
+#SMOOTH GEOM=ALL NITER=20000
+#SMOOTH PART=cart NITER=2
+#SMOOTH GEOM=BOX 0.0 0.5 0.5 0.75 -100 100 NITER=100 PART=cart
+
+# ================
+# viz
+# ================
+#WRITE_IMAGE INTERVAL 10 NAME=all SIZE=2000 2000 VAR=mesh MESH_ON_SURFACE
+WRITE_IMAGE INTERVAL 10 NAME=x0 GEOM=X_PLANE_FRAC 0.5 SIZE=2000 2000 VAR=mesh MESH_ON_SURFACE UP=0 0 1
+WRITE_IMAGE INTERVAL 10 NAME=y0 GEOM=Y_PLANE_FRAC 0.5 SIZE=2000 2000 VAR=mesh MESH_ON_SURFACE UP=1 0 0
+WRITE_IMAGE INTERVAL 10 NAME=z0 GEOM=Z_PLANE_FRAC 0.5 SIZE=2000 2000 VAR=mesh MESH_ON_SURFACE UP=0 1 0
+
+#WRITE_IMAGE_SMOOTH NAME=x0 INTERVAL=1 GEOM=PLANE 0.0 0.0 0.0 0.0 1.0 0.0 SIZE=2000 2000 VAR=MESH
+#MESH_ON_SURFACE

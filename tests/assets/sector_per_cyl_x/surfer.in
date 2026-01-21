@@ -1,0 +1,8 @@
+#
+VERBOSE
+
+SURF SBIN assets/sector_per_cyl_x/sector.sbin
+
+SET_PERIODIC ZONES periodic_theta0 periodic_theta1 CYL_X 30
+
+WRITE_SBIN sector.periodic.sbin

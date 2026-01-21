@@ -1,0 +1,22 @@
+# ================
+# parts
+# ================
+
+VERBOSE
+
+PART main \
+	SURF BIN ./assets/box.periodic.sbin \
+	PTS HCP 
+
+HCP_DELTA = 2.0
+NSMOOTH = 5
+
+#HCP_DX0 1.0E-4 1.0E-4 1.0E-4
+#WRITE_CHECK TECPLOT
+#WRITE_IMAGE NAME=iso_box_periodic_small GEOM=PLANE 2 1.4 1.0 1 0.7 0.5 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME=x_box_periodic_small GEOM=PLANE 2 0 0 1 0 0 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME=y_box_periodic_small GEOM=PLANE 0 2 0 0 1 0 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME=z_box_periodic_small GEOM=PLANE 0 0 2 0 0 1 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+
+WRITE_RESTART
+WRITE_RESTART_V4

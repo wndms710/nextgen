@@ -1,0 +1,46 @@
+VERBOSE
+
+# 10^3 cartesian uniform grid .. .
+SIMPLE_RESTART CART -1 1 -1 1 -1 1 10 10 10
+INIT u 0 0 0 p 0 
+
+EOS HELMHOLTZ
+RHO = 1.0
+MU = 0.025
+HELMHOLTZ_SOS 10
+
+#SGS_MODEL VREMAN
+
+MG_AGGLOMERATION_FACTOR 8 
+MG_SPLIT_ORPHANED_COLORS true
+
+MOMENTUM_MG_NLEVEL 2 # coarse grids + 1 fine grid
+MOMENTUM_MG_NSMOOTH 10,10 # first is fine grid
+MOMENTUM_MG_SMOOTHER 2,2 # 0 Jacobi, 1 GS, 2 Patr, 3 TIM
+MOMENTUM_MG_PROLONG_RELAX 1.0 # < 1 for high cfl
+
+MOMENTUM_RELAX 1.0 # Jacobi and GS might need < 1.0
+MOMENTUM_MAXITER 100
+MOMENTUM_ZERO 1e-6
+
+PRESSURE_MG_NLEVEL 2 # coarse grids + 1 fine grid
+PRESSURE_MG_NSMOOTH 5,10 # first is fine grid
+PRESSURE_MG_SMOOTHER 1,3 # 0 Jacobi, 1 SGS, 2 Patr, 3 CG
+#PRESSURE_MG_SOLVE_ON_COARSEST # uses CG on coarsest grid
+
+PRESSURE_RELAX 1.0 # Jacobi and SGS might need < 1.0
+PRESSURE_MAXITER 100
+PRESSURE_ZERO 1e-6 # solve more at high CFL
+
+TIMESTEP DT 0.00025
+CHECK_INTERVAL 1
+NSTEPS 3
+
+# bcs
+x0 INLET 1.0 0.0 0.0
+x1 OUTLET_VV 0.1 2.0 0.0 0.0
+y0 WALL
+y1 SLIP
+z0 WALL
+z1 SLIP
+

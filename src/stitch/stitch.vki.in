@@ -1,0 +1,41 @@
+# ================
+# parts
+# ================
+
+VERBOSE
+
+DEFINE LY 0.0575 # vertical blade spacing is 0.0575
+DEFINE NY 20
+DEFINE DELTA ($(LY)/$(NY)*2.0/sqrt(3.0))
+DEFINE LZ 0.01755 # original span in z is 0.01755
+DEFINE NZ 6
+
+PART EXTRUDE_SPLINE_WITH_STRAND PROFILE_XY /shared/vki_tmp/htall.dat X0 0 0 -2.5 X1 0 0 2.5 DN=0.04 NN=20 DT=0.4 DS=0.25 
+
+#SET_PART_KIND BAD 
+
+#PART main \
+#	SURF BIN ../surfer/vki.sbin SCALE 1 1 ($(NZ)*$(DELTA)*sqrt(3.0)/2.0/$(LZ)) \
+#	PTS HCP
+
+#PTS BIN check.vki.pbin
+#NSMOOTH 0
+#PTS HCP 
+
+HCP_DELTA $(DELTA) 
+
+# no need for this...
+#HCP_DX0 ($(DELTA)/4.0) 0.0001 0.0001
+HCP_WINDOW FAZONE wall-blade,wall-blade-te LEVEL=2 NLAYERS=5
+HCP_WINDOW FAZONE bars LEVEL=1 NLAYERS=5 
+
+# diagnostics
+
+#WRITE_CHECK TECPLOT
+#WRITE_IMAGE NAME=zmid GEOM=Z_PLANE_FRAC 1.0 SIZE 4000 4000 VAR=mesh MESH_ON_SURFACE UP 0 1 0
+#WRITE_IMAGE NAME=xmid GEOM=X_PLANE_FRAC 1.0 SIZE 4000 4000 VAR=mesh MESH_ON_SURFACE UP 0 1 0
+#WRITE_IMAGE NAME=iso GEOM=PLANE -0.2 -0.1 0.02 -1 0.1 0.2 SIZE 4000 4000 VAR=mesh MESH_ON_SURFACE UP 0 1 0
+
+#WRITE_RESTART_V4
+WRITE_RESTART
+INTERACTIVE

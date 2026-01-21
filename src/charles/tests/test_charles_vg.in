@@ -1,0 +1,59 @@
+
+
+# 5^3 cartesian uniform grid .. .
+SIMPLE_RESTART CART -1 1 -1 1 -1 1 5 5 5 
+
+DEFINE this_gamma 1.4
+DEFINE this_pref (1.0/$(this_gamma))
+
+EOS IDEAL_GAS
+RHO_REF = 1.0
+T_REF   = 1.0
+P_REF   = $(this_pref)
+GAMMA   = $(this_gamma)
+MU_REF  = 1.0e-5
+
+INIT_RUP 1.0 0.0 0 0 $(this_pref)
+
+WRITE_SNAPSHOT NAME dump/snapshots/rho INTERVAL 2 VARS rho 
+WRITE_RESULT NAME dump/restart INTERVAL 3
+
+NSTEPS 10
+TIMESTEP CFL 1.0
+CHECK_INTERVAL 1
+
+STATS rho u curl(u) rho*rho
+
+QUERY_BC y0 
+QUERY_BC z1 INTERVAL 3 
+
+# bcs
+x0 CBC_RUP 1.0 1.0 0 0 $(this_pref)
+x1 NSCBC_OUTLET_PRESSURE P_REF (0.5*$(this_pref))
+y0 WM_ALG_ADIABATIC 
+y1 WALL_ISOTHERMAL 0.95
+z0 WALL_ADIABATIC
+z1 WALL_ADIABATIC
+
+DEFINE npx 10
+DEFINE npy 10
+
+WRITE_IMAGE INTERVAL 8 NAME dump/images/test0 GEOM Z_PLANE_FRAC 0.5 SIZE $(npx) $(npy) VAR mach()/2
+WRITE_IMAGE INTERVAL 8 NAME dump/images/test1 TARGET 0 0 0 CAMERA 2 2 2 UP 0 0 1 SIZE $(npx) $(npy) VAR_ON_SURFACE x0:area_bf MESH_ON_SURFACE
+WRITE_IMAGE INTERVAL 8 NAME dump/images/test2 TARGET 0 0 0 CAMERA 2 2 2 UP 0 0 1 SIZE $(npx) $(npy) VAR_ON_SURFACE *:area_bf MESH_ON_SURFACE
+WRITE_IMAGE INTERVAL 3 NAME dump/images/test3 TARGET 0 0 0 CAMERA 2 2 2 UP 0 0 1 SIZE $(npx) $(npy) VAR_ON_SURFACE vol_cv MESH_ON_SURFACE
+WRITE_IMAGE INTERVAL 1 NAME dump/images/test4 TARGET 0 0 0 CAMERA 2 2 2 UP 0 0 1 SIZE $(npx) $(npy) GEOM ISO mag(x_no) 1 VAR mag(u) HIDE_ZONES ALL
+WRITE_IMAGE INTERVAL 1 NAME dump/images/test5 TARGET 0 0 0 CAMERA 2 2 2 UP 0 0 1 SIZE $(npx) $(npy) GEOM ISO mag(x_no) 1 VAR_ON_ISO mag(u) HIDE_ZONES ALL
+
+
+PDF_PROBE NAME dump/pdfprobes/T SAMPLE_INTERVAL=2 WRITE_INTERVAL=4 RESET_AFTER_WRITE NBIN 20 VAR=T
+
+CONDITIONAL_PROBE NAME dump/c1probes/y SAMPLE_INTERVAL 1 WRITE_INTERVAL 2 RESET_AFTER_WRITE CVAR y0:proj(comp(x_cv,0)) NBIN 500 RESET_AFTER_WRITE VARS y0:proj(comp(x_cv,2))
+CONDITIONAL_PROBE NAME dump/cprobe/wall_stats WRITE_INTERVAL 3 SAMPLE_INTERVAL 6 CVAR y0:proj(comp(x_cv,0)) NBIN 500 RESET_AFTER_WRITE VARS y0:tau_wall() y0:y_plus()
+
+# example flux probe syntax 
+FLUX_PROBE NAME dump/test_fp XP 0.5 0 0 NP 1 0 0 INTERVAL 1 VARS mass_flux() mass_flux(p) 
+
+
+WRITE_FORCE INTERVAL 1 NAME dump/forces BFZONE y0,y1,z0,z1 MOMENT 0 0 0 MOMENT 1 1 1 
+

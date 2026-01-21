@@ -1,0 +1,47 @@
+# Makefile.vof_trilinos.in
+# makefile for the cluster in cascade
+
+# Archiving commands to create, index, and extract
+AR =   ar rv
+RANLIB =  ar -ts
+EXTRACT =	ar -x
+
+PNG_ROOT = /opt/ohpc/pub/libs/libpng/gnu/1.6.27
+PNG_INC = -I$(PNG_ROOT)/include/
+PNG_LIB = -L$(PNG_ROOT)/lib/ -lpng -lz
+
+CANTERA_HOME ?= /opt/ohpc/pub/libs/cantera/
+
+TRILINOS_INC= -I/opt/ohpc/pub/software/trilinos/include/
+TRILINOS_LIB=-L/opt/ohpc/pub/software/trilinos/lib -lxpetra-sup -lxpetra -ltpetrainout -ltpetraext -ltpetra -lepetraext -lgaleri-xpetra -ltpi -lgaleri -lxpetra-sup -lteuchosparameterlist -lteuchoscore -lteuchosparameterlist -lteuchosremainder -lteuchosnumerics -lteuchoscomm   -lml -laztecoo -lamesos2 -lifpack2 -lepetra -lepetraext -ltriutils
+
+LAPACK_LIB =-L/lib64/ -llapack
+BLAS_LIB =-L/lib64/ -lblas
+
+# compiler
+CXX = mpicxx
+
+CXXFLAGS = -O3 -g 
+CXXFLAGS +=  -DCTI_VERBOSE3 -DWITH_SHM
+CXXFLAGS +=  -Wno-write-strings
+CXXFLAGS += $(PNG_INC) -DWITH_PNG 
+CXXFLAGS += $(TRILINOS_INC) -DWITH_TRILINOS
+
+
+CLIBS +=  $(PNG_LIB) $(LAPACK_LIB) $(BLAS_LIB) $(TRILINOS_LIB) 
+CLIBS += -lrt
+
+# for serial tools 
+CXX_NO_MPI=	g++
+
+CXXFLAGS_NO_MPI= -O2 -g $(PNG_INC) -DWITH_PNG
+CLIBS_NO_MPI= $(PNG_LIB)
+
+
+# for no mpi mode
+ifeq "$(mpi)$" "0"
+	CXXFLAGS+=-DNO_MPI
+	CXX = $(CXX_NO_MPI)
+endif
+
+

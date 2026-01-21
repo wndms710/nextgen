@@ -1,0 +1,437 @@
+../stitch.exe running on 1 cores, 1 nodes (1 cores per node)
+version: heads/dev-0-gc66c6ad built: Thu Apr  4 11:48:54 PDT 2019
+================= init params: output of raw sources ==================
+# ------------------ param(s) from input file: stitch.box.in...
+# ================
+# parts
+# ================
+
+# root 3 - truncated octahedron (default) 
+HCP_PACKING ROOT3
+DEFINE LX 1
+DEFINE NX 10
+DEFINE DELTA ($(LX)/$(NX))
+DEFINE NZ 10
+DEFINE LZ ($(NZ)*$(DELTA)*sqrt(3.0)/2.0)
+HCP_DELTA = $(DELTA)
+
+# root 2 - truncated octahedron
+#HCP_PACKING ROOT2
+#DEFINE LX 3/(sqrt(2.0)/sqrt(3.0)) 
+#DEFINE NX 3
+#DEFINE DELTA ($(LX)/$(NX))
+#DEFINE NZ 3
+#DEFINE LZ ($(NZ)*$(DELTA)*sqrt(2.0)/2.0)
+#HCP_DELTA = $(DELTA)/pow(3.0/2.0,1.0/3.0)
+
+# root 1 - rhombic dodecahedron
+#HCP_PACKING ONE
+#DEFINE NX 3
+#DEFINE DELTA ($(LX)/$(NX))
+#DEFINE NZ 3
+#DEFINE LX 3/(sqrt(1.0)/sqrt(3.0)) 
+#DEFINE LZ ($(NZ)*$(DELTA)*sqrt(1.0)/2.0)
+#HCP_DELTA = $(DELTA)/pow(3.0/1.0,1.0/3.0)
+
+# two directions of spanwise periodicity. Note that 
+# y AND z directions are set for "perfect" periodicity
+PART main \
+     SURF SIMPLE_BOX -$(LX) $(LX) -$(LZ) $(LZ) -$(LZ) $(LZ) PERIODIC_X PERIODIC_Y PERIODIC_Z 
+
+#HCP_WINDOW FAZONE x0 LEVEL=2 NLAYERS=20
+
+# channels and boundary layers...
+#PART main \
+#     SURF SIMPLE_BOX -$(LX) $(LX) -1 1 -$(LZ) $(LZ) PERIODIC_X PERIODIC_Z \
+#     PTS HCP 
+#HCP_WINDOW FAZONE y0,y1 LEVEL=2 NLAYERS=7
+
+# cart periodicity
+#PART main \
+#     SURF SIMPLE_BOX -sqrt(3)/2 sqrt(3)/2 -sqrt(3)/2 sqrt(3)/2 -sqrt(3)/2 sqrt(3)/2 PERIODIC_X PERIODIC_Y PERIODIC_Z \
+#     PTS CART 2 2 2
+#PART main \
+#     SURF SIMPLE_BOX -1 1 -1 1 -1 1 PERIODIC_X PERIODIC_Y \
+#     PTS CART 2 2 1
+
+NSMOOTH 5
+
+#WRITE_CHECK TECPLOT
+#WRITE_IMAGE NAME=iso_box GEOM=PLANE 2 1.4 1.0 1 0.7 0.5 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME=iso_box GEOM=PLANE 2 1.4 1.0 1 0.7 0.5 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME=x_box GEOM=PLANE 2 0 0 1 0 0 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME=y_box GEOM=PLANE 0 2 0 0 1 0 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME=z_box GEOM=PLANE 0 0 2 0 0 1 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+#WRITE_IMAGE INTERVAL 10 NAME=all SIZE=2000 2000 VAR=mesh MESH_ON_SURFACE
+#WRITE_IMAGE INTERVAL 10 NAME=x0 GEOM=X_PLANE_FRAC 0.5 SIZE=2000 2000 VAR=mesh MESH_ON_SURFACE UP=0 0 1
+#WRITE_IMAGE INTERVAL 10 NAME=y0 GEOM=Y_PLANE_FRAC 0.5 SIZE=2000 2000 VAR=mesh MESH_ON_SURFACE UP=1 0 0
+#WRITE_IMAGE INTERVAL 10 NAME=z0 GEOM=Z_PLANE_FRAC 0.5 SIZE=2000 2000 VAR=mesh MESH_ON_SURFACE UP=0 1 0
+
+#WRITE_RESTART #restart_channel.mles
+#INTERACTIVE
+
+WRITE_MLES
+
+=================== init params: end of raw sources ===================
+================ init params: expand loops and defines ================
+HCP_PACKING ROOT3
+# DEFINE LX 1
+# DEFINE NX 10
+# DEFINE DELTA (1/10)
+# eval check: DEFINE DELTA 0.1
+# DEFINE NZ 10
+# DEFINE LZ (10*(1/10)*sqrt(3.0)/2.0)
+# eval check: DEFINE LZ 0.866025
+HCP_DELTA (1/10)
+# eval check: HCP_DELTA 0.1
+PART main SURF SIMPLE_BOX -1 1 -(10*(1/10)*sqrt(3.0)/2.0) (10*(1/10)*sqrt(3.0)/2.0) -(10*(1/10)*sqrt(3.0)/2.0) (10*(1/10)*sqrt(3.0)/2.0) PERIODIC_X PERIODIC_Y PERIODIC_Z
+# eval check: PART main SURF SIMPLE_BOX -1 1 -0.866025 0.866025 -0.866025 0.866025 PERIODIC_X PERIODIC_Y PERIODIC_Z
+NSMOOTH 5
+WRITE_MLES
+======================== end of init params ===========================
+checking license...
+ > Found env CTI_LICENSE=/home/civey/codes/cti/cti_license.dat
+========================== license summary ============================
+ > License Verification Successful!
+ >   User:              Christopher Ivey
+ >   Organization:      Stanford University
+ >   Serial Number:     f571021397156167
+ >   Expiration Date:   Fri Jan 10 00:00:00 2020
+ >   Fingerprint Check: Found Matching ID!
+====================== end of license summary =========================
+ > Using home directory for WebUI run log ... /home/civey/cti_rdb.db
+ > Appended to WebUI log successfully
+HcpPointBuilder()
+VoronoiBuilder()
+stitch::init()
+stitch::run()
+
+processParam "HCP_PACKING ROOT3"
+HCP_PACKING set to ROOT3
+processParam elapsed time 9.0360641e-05 [s]
+
+
+processParam "HCP_DELTA (1/10)"
+HCP_DELTA set to 0.1
+processParam elapsed time 0.00010800362 [s]
+
+
+processParam "PART main SURF SIMPLE_BOX -1 1 -(10*(1/10)*sqrt(3.0)/2.0) (10*(1/10)*sqrt(3.0)/2.0) -(10*(1/10)*sqrt(3.0)/2.0) (10*(1/10)*sqrt(3.0)/2.0) PERIODIC_X PERIODIC_Y PERIODIC_Z"
+ > WARNING: skipping unrecognized PART token "MAIN"
+ > setting xyz periodicity...
+buildOrRebuildZoneVec()
+processParam elapsed time 0.00040364265 [s]
+
+
+processParam "NSMOOTH 5"
+NSMOOTH set to 5
+ensurePointsNearPlane: building ALL mesh points
+calcBbminmax(): partVec.size(): 1
+SurfaceShm::calcBbminmax: -1:1 -0.8660254:0.8660254 -0.8660254:0.8660254
+ [ -1 -0.8660254 -0.8660254 ] [ -1 -0.8660254 -0.8660254 ]
+ > HCP_X0 set to default: 0 0 0
+ > HCP_DX0 set to default: 0 0 0
+ > applying 0 HCP_WINDOW(s)
+ > setting surface_st_flag to FAZONE window index...
+ > level_max: 0, nwi: 1
+ setup time: 0.0010728836 [s], total time so far: 0.0010728836 [s]
+ > full bbox for level: 0 -0.8660254:0.8660254 -0.8660254:0.8660254
+ > delta for this level: 0.08660254
+ bbox time: 0.00042438507 [s], total time so far: 0.0014972687 [s]
+working on level 0...
+ > cart ray array size: 19 19
+ > nray cart: 361 nray: 361 ratio: 1
+ > level 0 nray_final: 362 avg/max per rank: 362 362
+ > surface ray intersection time: 0.00096654892 [s], total time so far: 0.0024638176 [s]
+ > in/out points found: 0, per rank avg/max: 0 0
+ > in/out exchanges: 2
+ > tris flagged at or above this level: 0 tris passing signed distance check: 0 fraction: -nan
+ > bloated tri time: 0.0013918877 [s], total time so far: 0.0038557053 [s]
+ > hcp point count: 7044
+ > hcp point distribution per level:
+ > level: 0 count: 7044 (100%)
+writeHcpPointsToPartData: hcp point count: 7044
+setPoints()
+ > points->np_global: 7044
+
+----------------------------------------------------------
+ first Voronoi build...
+----------------------------------------------------------
+buildVoronoi()
+ > ************* step1 **************...
+ > starting iter 1...
+ > building vd for 7044 of 7044 points (np_global=7044). Average nst/vd: 0. Total build cost: 352200, min/max nap_build: 7044 7044, max rank build cost: 352200
+ > build vd stats: count=7044 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 12.929018 14 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 1978, no seed but no guarantee: 3, guaranteed: 5063
+ > starting iter 2...
+ > building vd for 1981 of 1981 points (np_global=7044). Average nst/vd: 0. Total build cost: 99050, min/max nap_build: 1981 1981, max rank build cost: 99050
+ > build vd stats: count=1981 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 50.151439 62 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 0, no seed but no guarantee: 204, guaranteed: 1777
+ > starting iter 3...
+ > building vd for 204 of 204 points (np_global=7044). Average nst/vd: 0. Total build cost: 10200, min/max nap_build: 204 204, max rank build cost: 10200
+ > build vd stats: count=204 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 81.794118 120 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 0, no seed but no guarantee: 0, guaranteed: 204
+ > starting iter 4...
+ > done
+ > ************* step2 **************...
+ > ngr_max: 1
+ > total voronoi memory per core (avg,max): 14.247016 14.247016 MB
+ > face match: 1.6246158e-15, max unmatched face area2/(r2*r2): 5.4811084e-29, area2_ratio_zero: 1e-24
+ > ************* step3 **************...
+ > cvs with orphans: 0, orphans: 0
+ > open face check (should be small): 0
+ > failing vd count: 0
+
+----------------------------------------------------------
+ Smoothing step 1 out of 5...
+----------------------------------------------------------
+lloydIterate()
+ > SMOOTH BLAYER 3
+ > growing nlayers: 3
+ > final smooth counts: flagged 4694 out of 7044, SMOOTH_LIMIT applied: 0, Part constraints applied: 0, Finite motion applied: 1978
+ > max normalized dx: 0.12259421
+ > time since last check: 4.1143129
+buildVoronoi()
+ > ************* step1 **************...
+ > starting iter 1...
+ > building vd for 7044 of 7044 points (np_global=7044). Average nst/vd: 0. Total build cost: 352200, min/max nap_build: 7044 7044, max rank build cost: 352200
+ > build vd stats: count=7044 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 24.996877 107 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 0, no seed but no guarantee: 68, guaranteed: 6976
+ > starting iter 2...
+ > building vd for 68 of 68 points (np_global=7044). Average nst/vd: 0. Total build cost: 3400, min/max nap_build: 68 68, max rank build cost: 3400
+ > build vd stats: count=68 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 15.911765 16 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 0, no seed but no guarantee: 0, guaranteed: 68
+ > starting iter 3...
+ > done
+ > ************* step2 **************...
+ > ngr_max: 1
+ > total voronoi memory per core (avg,max): 14.299656 14.299656 MB
+ > face match: 1.8698513e-14, max unmatched face area2/(r2*r2): 6.707186e-29, area2_ratio_zero: 1e-24
+ > ************* step3 **************...
+ > cvs with orphans: 0, orphans: 0
+ > open face check (should be small): 0
+ > failing vd count: 0
+
+----------------------------------------------------------
+ Smoothing step 2 out of 5...
+----------------------------------------------------------
+lloydIterate()
+ > SMOOTH BLAYER 3
+ > growing nlayers: 3
+ > final smooth counts: flagged 4593 out of 7044, SMOOTH_LIMIT applied: 0, Part constraints applied: 0, Finite motion applied: 3554
+ > max normalized dx: 0.047397352
+ > time since last check: 3.5783312
+buildVoronoi()
+ > ************* step1 **************...
+ > starting iter 1...
+ > building vd for 7044 of 7044 points (np_global=7044). Average nst/vd: 0. Total build cost: 352200, min/max nap_build: 7044 7044, max rank build cost: 352200
+ > build vd stats: count=7044 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 26.736797 109 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 0, no seed but no guarantee: 72, guaranteed: 6972
+ > starting iter 2...
+ > building vd for 72 of 72 points (np_global=7044). Average nst/vd: 0. Total build cost: 3600, min/max nap_build: 72 72, max rank build cost: 3600
+ > build vd stats: count=72 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 14 14 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 0, no seed but no guarantee: 0, guaranteed: 72
+ > starting iter 3...
+ > done
+ > ************* step2 **************...
+ > ngr_max: 1
+ > total voronoi memory per core (avg,max): 14.456856 14.456856 MB
+ > face match: 1.754137e-14, max unmatched face area2/(r2*r2): 9.3977933e-29, area2_ratio_zero: 1e-24
+ > ************* step3 **************...
+ > cvs with orphans: 0, orphans: 0
+ > open face check (should be small): 0
+ > failing vd count: 0
+
+----------------------------------------------------------
+ Smoothing step 3 out of 5...
+----------------------------------------------------------
+lloydIterate()
+ > SMOOTH BLAYER 3
+ > growing nlayers: 3
+ > final smooth counts: flagged 4761 out of 7044, SMOOTH_LIMIT applied: 0, Part constraints applied: 0, Finite motion applied: 4761
+ > max normalized dx: 0.037101155
+ > time since last check: 3.6642742
+buildVoronoi()
+ > ************* step1 **************...
+ > starting iter 1...
+ > building vd for 7044 of 7044 points (np_global=7044). Average nst/vd: 0. Total build cost: 352200, min/max nap_build: 7044 7044, max rank build cost: 352200
+ > build vd stats: count=7044 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 26.81289 114 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 0, no seed but no guarantee: 4, guaranteed: 7040
+ > starting iter 2...
+ > building vd for 4 of 4 points (np_global=7044). Average nst/vd: 0. Total build cost: 200, min/max nap_build: 4 4, max rank build cost: 200
+ > build vd stats: count=4 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 14 14 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 0, no seed but no guarantee: 0, guaranteed: 4
+ > starting iter 3...
+ > done
+ > ************* step2 **************...
+ > ngr_max: 1
+ > total voronoi memory per core (avg,max): 14.560096 14.560096 MB
+ > face match: 1.2497935e-13, max unmatched face area2/(r2*r2): 5.1180782e-29, area2_ratio_zero: 1e-24
+ > ************* step3 **************...
+ > cvs with orphans: 0, orphans: 0
+ > open face check (should be small): 0
+ > failing vd count: 0
+
+----------------------------------------------------------
+ Smoothing step 4 out of 5...
+----------------------------------------------------------
+lloydIterate()
+ > SMOOTH BLAYER 3
+ > growing nlayers: 3
+ > final smooth counts: flagged 4763 out of 7044, SMOOTH_LIMIT applied: 0, Part constraints applied: 0, Finite motion applied: 4763
+ > max normalized dx: 0.028488806
+ > time since last check: 3.6540432
+buildVoronoi()
+ > ************* step1 **************...
+ > starting iter 1...
+ > building vd for 7044 of 7044 points (np_global=7044). Average nst/vd: 0. Total build cost: 352200, min/max nap_build: 7044 7044, max rank build cost: 352200
+ > build vd stats: count=7044 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 27.237365 115 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 0, no seed but no guarantee: 12, guaranteed: 7032
+ > starting iter 2...
+ > building vd for 12 of 12 points (np_global=7044). Average nst/vd: 0. Total build cost: 600, min/max nap_build: 12 12, max rank build cost: 600
+ > build vd stats: count=12 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 14 14 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 0, no seed but no guarantee: 0, guaranteed: 12
+ > starting iter 3...
+ > done
+ > ************* step2 **************...
+ > ngr_max: 1
+ > total voronoi memory per core (avg,max): 14.678816 14.678816 MB
+ > face match: 1.411714e-12, max unmatched face area2/(r2*r2): 4.0251063e-29, area2_ratio_zero: 1e-24
+ > ************* step3 **************...
+ > cvs with orphans: 0, orphans: 0
+ > open face check (should be small): 0
+ > failing vd count: 0
+
+----------------------------------------------------------
+ Smoothing step 5 out of 5...
+----------------------------------------------------------
+lloydIterate()
+ > SMOOTH BLAYER 3
+ > growing nlayers: 3
+ > final smooth counts: flagged 4763 out of 7044, SMOOTH_LIMIT applied: 0, Part constraints applied: 0, Finite motion applied: 4763
+ > max normalized dx: 0.022725919
+ > time since last check: 3.6510158
+buildVoronoi()
+ > ************* step1 **************...
+ > starting iter 1...
+ > building vd for 7044 of 7044 points (np_global=7044). Average nst/vd: 0. Total build cost: 352200, min/max nap_build: 7044 7044, max rank build cost: 352200
+ > build vd stats: count=7044 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 27.319137 117 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 0, no seed but no guarantee: 12, guaranteed: 7032
+ > starting iter 2...
+ > building vd for 12 of 12 points (np_global=7044). Average nst/vd: 0. Total build cost: 600, min/max nap_build: 12 12, max rank build cost: 600
+ > build vd stats: count=12 nst/vd (avg,max): 0 0 nnbr/vd (avg:max): 14 14 load imbalance: 1
+ > vd stats: no nbrs and seed: 0, nbrs and seed: 0, no seed but no guarantee: 0, guaranteed: 12
+ > starting iter 3...
+ > done
+ > ************* step2 **************...
+ > ngr_max: 1
+ > total voronoi memory per core (avg,max): 14.796776 14.796776 MB
+ > face match: 1.8770447e-10, max unmatched face area2/(r2*r2): 6.8963411e-29, area2_ratio_zero: 1e-24
+ > ************* step3 **************...
+ > cvs with orphans: 0, orphans: 0
+ > open face check (should be small): 0
+ > failing vd count: 0
+ > time since last check: 3.4508641
+returnPoints()
+processParam elapsed time 22.173183 [s]
+
+
+processParam "WRITE_MLES"
+WRITE_MLES filename=restart.mles, version=5, surface=1
+VoronoiBuilder::writeRestart: restart.mles io_version=5
+ > surface triangle reduction: unreduced 0 reduced 0
+ > max geometry check errors: vol_cv 1.3544721e-14 x_cv: [ 7.480995e-16 5.6828457e-16 5.4941945e-16 ]
+ > boundary max dist face loop (should be zero): 0 max ratio (should be small): 0
+ > internal max dist face loop (should be zero): 0 max ratio (should be small): 0
+ > averageFaDupData dn2_max: 8.7265177e-34 dx2_max: 2.5332565e-22
+ > max number of loops per face: 1 max area-weighted face normal difference over delta^2 for reconciled face (should be small): 1.386414e-15
+ > memory max: nodeVec MB: 7.787552 noobf_v_vec MB: 0 noofa_v_vec MB: 1.162416 vdArray MB: 14.796776 vd node count: 164559
+ > memory avg: nodeVec MB: 7.787552 noobf_v_vec MB: 0 noofa_v_vec MB: 1.162416 vdArray MB: 14.796776 vd node count: 164559
+ > compressing no_bits.OK
+ > compressing nodes...OK
+ > compressing nodes..OK
+ > compressing nodes...OK
+ > dumpRange: x_local, 0: -1:1.0566803, 1: -0.87314828:0.90788681, 2: -0.90788681:0.87314828
+ > dumpRange: x_local RMS (should be small), 0: 0:2.9802322e-08, 1: 0:2.787752e-08, 2: 0:2.787752e-08
+ > dumpRange: x_no, 0: -1:1.0566803, 1: -0.87314828:0.90788681, 2: -0.90788681:0.87314828
+ > dumpRange: x_no RMS (should be small), 0: 0:2.1073424e-08, 1: 0:1.8250121e-08, 2: 0:1.8250121e-08
+ > pbi_no match (should be zero): 4.4408921e-16
+ > final nno_global: 42438 nno_p_global: 6130 nno_pb_global: 6130
+ > node group: 0 count: 12
+ > node group: 1 count: 142
+ > node group: 2 count: 142
+ > node group: 3 count: 162
+ > node group: 4 count: 1336
+ > node group: 5 count: 2168
+ > node group: 6 count: 2168
+ > node group: 7 count: 0
+ > node group: 8 count: 36308
+ > nbf_global: 0 avg noobf: -nan nfa_global: 49039 avg noofa: 5.1101368
+ > dumpRange: area_over_delta_bf (should be non-negative and bounded), inf:-inf
+ > UGP_IO_VERSION: 5
+ > timestamp (GMT) 190404:192159
+ > params
+ > counts
+ > hash fe3/+CBaSqqNV5HwYYknfPOtEFY=
+ > cvobf
+ > noobf_i/v 
+ > dumpRange: noobf_count, 1000000000:-1000000000
+ > spobf_i/v/wgt 
+ > sbobf_i/v 
+ > cvofa (int+periodic)
+ > noofa_i/v 
+ > dumpRange: noofa_count, 3:9
+ > periodic transform(s)
+ > pbi_pno
+ > x_no
+ > vol_cv
+ > x_vv
+ > r_vv
+ > vv_bbox
+ > x_cv
+ > n_bf
+ > x_bf
+ > area_bf
+ > area_over_delta_bf
+ > Gij_bf
+ > n_fa (int+periodic) 
+ > x_fa (int+periodic) 
+ > surface (xp,spost,znost)
+ > surface periodic info
+ > EOF
+processParam elapsed time 6.6187694 [s]
+
+~VoronoiBuilder()
+~HcpPointBuilder()
+CTI_Finalize()
+ > Appended to WebUI log successfully
+=========================== param summary =============================
+HCP_PACKING ROOT3
+HCP_DELTA (1/10)
+PART main SURF SIMPLE_BOX -1 1 -(10*(1/10)*sqrt(3.0)/2.0) (10*(1/10)*sqrt(3.0)/2.0) -(10*(1/10)*sqrt(3.0)/2.0) (10*(1/10)*sqrt(3.0)/2.0) PERIODIC_X PERIODIC_Y PERIODIC_Z
+NSMOOTH 5
+WRITE_MLES
+======================== end of param summary =========================
+============================ param usage ==============================
+The following params were never accessed:
+-----------------------------------------------------------------------
+The following params were accessed differently on different ranks:
+------------------------------------------------------------------------
+The following params were accessed uniformly across ranks:
+HCP_PACKING, access count: 1
+HCP_DELTA, access count: 1
+PART, access count: 1
+NSMOOTH, access count: 1
+WRITE_MLES, access count: 1
+-----------------------------------------------------------------------
+The solver checked or requested the following params that were not specified: 
+DEBUG_COUNT, default used: -1
+DEBUG_OPEN_FACES
+DEBUG_RANK, default used: -1
+PRINT_ORPHANS
+RANK_CHECK
+ROTATE_MLES
+SMOOTH_PART
+VERBOSE
+rank_build_cost_limit, default used: 100000000
+======================== end of param usage ===========================

@@ -1,0 +1,17 @@
+VERBOSE
+RESTART = ../stitch/restart.mles
+
+# use one the keywords "SNAPSHOTS" or "SNAPSHOT" to 
+
+# if the first parameter after snapshots is "NAME" then
+# the algorithm assumes the following format, similar to post
+# with NAME <name> RANGE <start> <inc> <end> 
+SNAPSHOT NAME ../charles/snapshots/rup RANGE 0 50 900
+
+# if there is no name paramater, then we assume these are
+# just a list of snapshots. This is useful when using command line
+# arguments with wildcards, e.g.
+#
+# > ./lespost.exe --RESTART restart.mles --SNAPSHOTS snapshots/*.sles 
+#
+#SNAPSHOTS = ../charles/snapshots/rup.00000000.sles ../charles/snapshots/rup.00000050.sles

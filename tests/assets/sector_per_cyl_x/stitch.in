@@ -1,0 +1,11 @@
+#
+VERBOSE
+
+PART SURF sector.periodic.sbin
+
+HCP_DELTA 0.05 
+#HCP_DELTA 0.025  // easily observe periodic error over 10-20k steps
+
+NSMOOTH 5
+
+WRITE_MLES sector.periodic.mles

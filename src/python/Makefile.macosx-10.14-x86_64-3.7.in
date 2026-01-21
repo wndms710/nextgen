@@ -1,0 +1,9 @@
+# for help with these settings, cd to ctitest and follow instructions
+
+PYTHON = /usr/local/bin/python3
+ARCH_PY = macosx-10.14-x86_64-3.7
+LIB_SUFFIX_PY = cpython-37m-darwin.so
+CXX_PY = clang++
+CXXFLAGS_PY = -Wno-unused-result -Wsign-compare -Wunreachable-code -fno-common -dynamic -DNDEBUG -g -fwrapv -O3 -Wall -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks/Tk.framework/Versions/8.5/Headers -I/usr/local/include -I/usr/local/opt/openssl@1.1/include -I/usr/local/opt/sqlite/include -I/usr/local/Cellar/python/3.7.4_1/Frameworks/Python.framework/Versions/3.7/include/python3.7m 
+LDFLAGS_PY = -bundle -undefined dynamic_lookup \
+	-L/usr/local/lib -L/usr/local/opt/openssl@1.1/lib -L/usr/local/opt/sqlite/lib

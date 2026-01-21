@@ -1,0 +1,4 @@
+MSH ./bond_coat.cas SCALE 0.0254 TRANSLATE 0 0 0 ZONE 2 
+#MSH ./cap_metal.cas ZONE 0
+#MSH ./outer_metal.cas ZONE 3
+#MSH ./tbc.cas ZONE 1

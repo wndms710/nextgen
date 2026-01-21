@@ -1,0 +1,80 @@
+# Makefile.theta (gpu)
+
+#Currently Loaded Modulefiles:
+#  1) modules/3.2.11.4
+#  2) gcc/7.3.0
+#  3) craype-mic-knl
+#  4) craype-network-aries
+#  5) craype/2.6.5
+#  6) cray-mpich/7.7.14
+#  7) nompirun/nompirun
+#  8) adaptive-routing-a3
+#  9) darshan/3.2.1
+# 10) xalt
+# 11) udreg/2.3.2-7.0.2.1_2.26__g8175d3d.ari
+# 12) ugni/6.0.14.0-7.0.2.1_3.39__ge78e5b0.ari
+# 13) pmi/5.0.16
+# 14) dmapp/7.1.1-7.0.2.1_2.45__g38cf134.ari
+# 15) gni-headers/5.0.12.0-7.0.2.1_2.9__g3b1768f.ari
+# 16) xpmem/2.2.20-7.0.2.1_2.38__g87eb960.ari
+# 17) job/2.2.4-7.0.2.1_2.42__g36b56f4.ari
+# 18) dvs/2.12_2.2.170-7.0.2.1_6.2__gfe7b137d
+# 19) alps/6.6.59-7.0.2.1_3.32__g872a8d62.ari
+# 20) rca/2.2.20-7.0.2.1_2.46__g8e3fb5b.ari
+# 21) atp/3.8.1
+# 22) perftools-base/20.06.0
+# 23) PrgEnv-gnu/6.0.7
+# 24) cudatoolkit/10.2.89_3.28-7.0.2.0_2.32__g52c0314
+
+# Archiving commands to create, index, and extract
+AR = 		ar r
+RANLIB = 	ar -ts
+EXTRACT =	ar -x
+
+CXXFLAGS =	-O3 -g
+CXXFLAGS +=	-ffast-math 
+CXXFLAGS +=	-march=knl
+CXXFLAGS +=	-Wall
+CXXFLAGS += 	-DCTI_VERBOSE3 
+CXXFLAGS +=	-Wno-write-strings
+CXXFLAGS +=	-Wno-sign-compare
+CXXFLAGS +=     -DWITH_SHM
+CXXFLAGS +=	-Wno-unused-result
+
+# compiler
+CXX=		CC	
+
+NVCC=	 	nvcc	
+NVCCFLAGS=	-O3 -g
+MPI_INCLUDE=	-I/opt/cray/pe/mpt/7.7.14/gni/mpich-gnu/7.1/include 
+
+PNG_INC =
+PNG_LIB = 	-lpng -lz
+
+NVIDIA_LIB=	-L/opt/nvidia/cudatoolkit10.2/10.2.89_3.28-7.0.2.0_2.32__g52c0314/lib64 
+NVIDIA_LIB +=	-L/opt/nvidia/cudatoolkit10.2/10.2.89_3.28-7.0.2.0_2.32__g52c0314/extras/CUPTI/lib64 
+NVIDIA_LIB +=	-L/opt/nvidia/cudatoolkit10.2/10.2.89_3.28-7.0.2.0_2.32__g52c0314/nvvm/lib64 
+NVIDIA_LIB +=	-L/opt/cray/nvidia/default/lib64
+
+CXXFLAGS +=  	$(PNG_INC)	-DWITH_PNG   
+CLIBS +=   	$(PNG_LIB) 
+#CLIBS +=	-llapack -lblas 
+CLIBS +=	-lrt
+
+
+# for serial tools 
+CXX_NO_MPI=	g++
+CXXFLAGS_NO_MPI +=  	$(PNG_INC) -DWITH_PNG -O2 -g 
+CLIBS_NO_MPI=	$(PNG_LIB)
+
+# for pretty printing, set Q=  for debugging 
+Q?=	@
+
+%.o: %.cpp
+	$(Q)echo "     CXX $<"
+	$(Q)$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+%.o: %.cu
+	$(Q)echo "     NVCC $<"
+	$(Q)$(NVCC) $(NVCCFLAGS) -c -o $@ $<
+

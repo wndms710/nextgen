@@ -1,0 +1,27 @@
+# ================
+# parts
+# ================
+
+DEFINE L 2.0  # the original box is -1:1, -1:1, -1:1
+DEFINE NX 8
+DEFINE DELTA ($(L)/$(NX))
+DEFINE NY 8
+DEFINE NZ 8
+	
+PART main \
+	SURF BIN ./assets/box.periodic.sbin SCALE 1 ($(NY)*$(DELTA)*sqrt(3.0)/2.0/$(L)) ($(NZ)*$(DELTA)*sqrt(3.0)/2.0/$(L)) \
+	PTS HCP 
+
+HCP_DELTA = $(DELTA)
+#NSMOOTH = 0
+
+#HCP_DX0 1.0E-4 1.0E-4 1.0E-4
+
+#WRITE_CHECK TECPLOT
+#WRITE_IMAGE NAME=iso_box_periodic GEOM=PLANE 2 1.4 1.0 1 0.7 0.5 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME=x_box_periodic GEOM=PLANE 2 0 0 1 0 0 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME=y_box_periodic GEOM=PLANE 0 2 0 0 1 0 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+#WRITE_IMAGE NAME=z_box_periodic GEOM=PLANE 0 0 2 0 0 1 SIZE 1000 1000 VAR=mesh MESH_ON_SURFACE
+
+#WRITE_RESTART_V4
+WRITE_RESTART

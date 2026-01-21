@@ -1,0 +1,32 @@
+# 10^3 cartesian uniform grid .. .
+SIMPLE_RESTART CART -1 1 -1 1 -1 1 10 10 10 
+
+DEFINE this_gamma 1.4
+DEFINE this_pref (1.0/$(this_gamma))
+
+EOS IDEAL_GAS
+RHO_REF = 1.0
+T_REF   = 1.0
+P_REF   = $(this_pref)
+GAMMA   = $(this_gamma)
+MU_REF  = 1.0e-5
+
+INIT_RUP 1.0 0.0 0 0 $(this_pref)
+
+NSTEPS = 4
+TIMESTEP DT = 0.01
+CHECK_INTERVAL 1
+
+# bcs
+x0 WALL_ADIABATIC
+x1 WALL_ADIABATIC
+y0 WALL_ADIABATIC 
+y1 WALL_ADIABATIC
+z0 WALL_ADIABATIC
+z1 WALL_ADIABATIC
+
+### FW-H surface data
+FWH_SURFACE NAME=dump/surface1/s1 INTERVAL=1 TEC \
+GEOM=TCONE  -0.5  0.0 0.0 0.25   0.5 0.0 0.0 0.75 
+#ENDCAPS_X 4 0 0.5
+

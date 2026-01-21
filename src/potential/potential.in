@@ -1,0 +1,16 @@
+RESTART ../stitch/restart.mles result.sles
+
+DEFINE mdot 1
+DEFINE frac 0.6
+DEFINE m (mdot_fa()*sqrt(8))
+
+# bcs
+main.x0 MS ($(mdot)*$(frac)) 1
+main.x1 MS ($(mdot)*(1.0-$(frac))) 1
+main.y0 OUTLET
+
+#NSTEPS 1
+
+#GET_STREAMLINE main.x0 0.1
+
+#INTERACTIVE

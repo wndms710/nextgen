@@ -1,0 +1,726 @@
+"\
+\"parameters\": [ \n\
+    { \n\
+      \"name\": \"SURF\", \n\
+      \"children\": [ \n\
+        \"SBIN\", \n\
+        \"STL\", \n\
+        \"MSH\", \n\
+        \"CAS\", \n\
+        \"RESTART\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SBIN\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<filename>.sbin\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"STL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<filename>.stl\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"MSH\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<filename>.msh\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CAS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<filename>.cas\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RESTART\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": [ \n\
+        \"<mesh>.mles\", \n\
+        \"<solution>.sles\" \n\
+      ] \n\
+    }, \n\
+    { \n\
+      \"name\": \"CLEAR\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_JOURNAL\", \n\
+      \"children\": [ \n\
+        \"VERBOSE\" \n\
+      ], \n\
+      \"args\": \"journal.in\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"OFF\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_JSON\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"BITS\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NAME\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"filename\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"BITS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"bit mask integer\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SPLIT_ZONE\", \n\
+      \"children\": [ \n\
+        \"ALL\", \n\
+        \"ZONE_NAMES\", \n\
+        \"ZONE_IDS\", \n\
+        \"SUBZONES\", \n\
+        \"BY_ANGLE\", \n\
+        \"BY_DISJOINT\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"BY_ANGLE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"angle in degrees\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"BY_DISJOINT\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ALL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ZONE_NAMES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"comma separated list of zone names\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ZONE_IDS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"comma separated list of zone indices\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SUBZONES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"comma separated list of subzone indices\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"FLIP\", \n\
+      \"children\": [ \n\
+        \"ALL\", \n\
+        \"ZONE_NAMES\", \n\
+        \"ZONE_IDS\", \n\
+        \"SUBZONES\", \n\
+        \"GROUPS\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"GROUPS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"comma separated list of group indices\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ALIGN_NORMALS\", \n\
+      \"children\": [ \n\
+        \"SEED\", \n\
+        \"AUTO\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"AUTO\", \n\
+      \"children\": [ \n\
+      ] \n\
+    }, \n\
+    { \n\
+      \"name\": \"SEED\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"subzone index\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"MOVE_TO_ZONE\", \n\
+      \"children\": [ \n\
+        \"ALL\", \n\
+        \"NAME\", \n\
+        \"INDEX\", \n\
+        \"ZONE_NAMES\", \n\
+        \"ZONE_IDS\", \n\
+        \"SUBZONES\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RENAME_ZONE\", \n\
+      \"children\": [ \n\
+        \"INDEX\" \n\
+      ], \n\
+      \"args\": \"<old name> <new name>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"INDEX\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"destination zone index\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TRANSLATE\", \n\
+      \"children\": [ \n\
+        \"ALL\", \n\
+        \"DX\", \n\
+        \"ZONE_NAMES\", \n\
+        \"ZONE_IDS\", \n\
+        \"SUBZONES\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"DX\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<dx> <dy> <dz>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SCALE\", \n\
+      \"children\": [ \n\
+        \"SX\", \n\
+        \"ABOUT\", \n\
+        \"CENTROID\", \n\
+        \"FACTOR\", \n\
+        \"ALL\", \n\
+        \"ZONE_NAMES\", \n\
+        \"ZONE_IDS\", \n\
+        \"SUBZONES\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SX\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<sx> <sy> <sz>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ABOUT\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<x> <y> <z>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CENTROID\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"FACTOR\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"scaling factor\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ROTATE\", \n\
+      \"children\": [ \n\
+        \"AXIS\", \n\
+        \"POINT\", \n\
+        \"ANGLE\", \n\
+        \"ALL\", \n\
+        \"ZONE_NAMES\", \n\
+        \"ZONE_IDS\", \n\
+        \"SUBZONES\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"AXIS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<nx> <ny> <nz>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"POINT\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<x> <y> <z>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ANGLE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"angle in degrees\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SNAP_TO_COM\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"MIRROR\", \n\
+      \"children\": [ \n\
+        \"PLANE\", \n\
+        \"ALL\", \n\
+        \"ZONE_NAMES\", \n\
+        \"ZONE_IDS\", \n\
+        \"SUBZONES\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"COPY\", \n\
+      \"children\": [ \n\
+        \"TRANSLATE\", \n\
+        \"ROTATE\", \n\
+        \"ALL\", \n\
+        \"ZONE_NAMES\", \n\
+        \"ZONE_IDS\", \n\
+        \"SUBZONES\", \n\
+        \"COPIES\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"COPIES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"number of copies\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"IMPRINT\", \n\
+      \"children\": [ \n\
+        \"SPLIT_ZONES\", \n\
+        \"PLANE\", \n\
+        \"ALL\", \n\
+        \"ZONE_NAMES\", \n\
+        \"ZONE_IDS\", \n\
+        \"SUBZONES\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SPLIT_ZONES\", \n\
+      \"children\": [ \n\
+        \"IMPRINT\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RUN_DIAGNOSTICS\", \n\
+      \"children\": [ \n\
+        \"CHECK_SELF_INTERSECTIONS\", \n\
+        \"OUTPUT_FORMAT\", \n\
+        \"WITH_SUBZONE_INFO\", \n\
+        \"SEED_SAMPLES\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CHECK_SELF_INTERSECTIONS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"OUTPUT_FORMAT\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"either SBIN or TECPLOT\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WITH_SUBZONE_INFO\", \n\
+      \"children\": [ \n\
+      ] \n\
+    }, \n\
+    { \n\
+      \"name\": \"SEED_SAMPLES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"number of Voronoi samples\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"MERGE_COLLOCATED_NODES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CLOSE_OPEN_EDGE_LOOPS\", \n\
+      \"children\": [ \n\
+        \"SUBZONES\", \n\
+        \"PLANAR_FMM\", \n\
+        \"EAR_CLIPPING\", \n\
+        \"DONUT\", \n\
+        \"NESTED\", \n\
+        \"NESTED_TOL\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CLOSE_EDGE_LOOPS\", \n\
+      \"children\": [ \n\
+        \"SUBZONES\", \n\
+        \"PLANAR_FMM\", \n\
+        \"EAR_CLIPPING\", \n\
+        \"DONUT\", \n\
+        \"NESTED\", \n\
+        \"NESTED_TOL\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANAR_FMM\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"DONUT\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"EAR_CLIPPING\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NESTED\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NESTED_TOL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"tolerance\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SET_FEATURE_ANGLE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"crease angle\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"GROUP_DYNAMIC_EDGES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"edge criterion\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ZIP_OPEN_EDGES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"DELETE\", \n\
+      \"children\": [ \n\
+        \"SUBZONES\", \n\
+        \"ZONE_IDS\", \n\
+        \"ZONE_NAMES\" \n\
+      ] \n\
+    }, \n\
+    { \n\
+      \"name\": \"CLEAR_PERIODIC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SET_PERIODIC\", \n\
+      \"children\": [ \n\
+        \"ZONES\", \n\
+        \"SUGGEST\", \n\
+        \"CYL_Y\", \n\
+        \"CYL_Z\", \n\
+        \"CYL_X\", \n\
+        \"CART\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ZONES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<comma delimited zones for side A> <comma delimited zones for side B>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SUGGEST\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CART\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<dx> <dy> <dz>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CYL_X\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"angle in degrees\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CYL_Y\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"angle in degrees\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CYL_Z\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"angle in degrees\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_SBIN\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"SUBZONES\", \n\
+        \"ZONE_IDS\", \n\
+        \"ZONE_NAMES\" \n\
+      ] \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_STL\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"SUBZONES\", \n\
+        \"ZONE_IDS\", \n\
+        \"ZONE_NAMES\" \n\
+      ] \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_TECPLOT\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"ZONE_IDS\", \n\
+        \"ZONE_NAMES\" \n\
+      ] \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_STITCH_INPUT\", \n\
+      \"children\": [ \n\
+        \"NAME\" \n\
+      ] \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_CHARLES_INPUT\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"EOS\" \n\
+      ] \n\
+    }, \n\
+    { \n\
+      \"name\": \"EOS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"equation of state to pre-populate\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SPLIT_FLAG\", \n\
+      \"children\": [ \n\
+        \"BY_ANGLE\", \n\
+        \"BY_DISJOINT\" \n\
+      ] \n\
+    }, \n\
+    { \n\
+      \"name\": \"BY_ANGLE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"crease angle\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"BY_DISJOINT\", \n\
+      \"children\": [ \n\
+      ] \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_IMAGE\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"RGB_MODE\", \n\
+        \"GEOM\", \n\
+        \"CAMERA\", \n\
+        \"TARGET\", \n\
+        \"VAR\", \n\
+        \"MESH_ON_SURFACE\", \n\
+        \"NO_GEOM_BLANKING\", \n\
+        \"SIZE\", \n\
+        \"UP\", \n\
+        \"BLANK\", \n\
+        \"WIDTH\", \n\
+        \"RANGE\", \n\
+        \"HIDE_SUBZONES\", \n\
+        \"HIDE_ZONES\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RGB_MODE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"DATA or NORMALS\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"GEOM\", \n\
+      \"children\": [ \n\
+        \"Z_PLANE_FRAC\", \n\
+        \"Y_PLANE_FRAC\", \n\
+        \"X_PLANE_FRAC\", \n\
+        \"PLANE_FRAC\", \n\
+        \"PLANE\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"Z_PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"Y_PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"X_PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"nx ny nz frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<x> <y> <z> <nx> <ny> <nz>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CAMERA\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TARGET\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"VAR\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"CV_DATA\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"MESH_ON_SURFACE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NO_GEOM_BLANKING\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SIZE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"ni nj\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"UP\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"ex ey ez\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"BLANK\", \n\
+      \"children\": [ \n\
+        \"PLANE\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WIDTH\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"width\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RANGE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"var_min var_max\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HIDE_SUBZONES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"ALL or comma-separated-subzones\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HIDE_ZONES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"ALL or comma-separated-zone-ids\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HELP\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"any command\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_SBIN\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"filename.sbin\" \n\
+    }\n\
+  ]\
+"

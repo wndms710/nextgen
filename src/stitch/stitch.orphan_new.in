@@ -1,0 +1,21 @@
+# ================
+# parts
+# ================
+
+#PART SURF BIN assets/multi_vor.sbin SCALE_Y 0.1 PTS HCP 
+PART SURF BIN assets/multi_vor.sbin SCALE 1 5 1 PTS HCP 
+HCP_DELTA 0.1
+HCP_WINDOW ZONE=x0,x1 LEVEL=1 
+
+WRITE_IMAGE NAME=mesh_orig GEOM=PLANE 0.0 0.0 0.0 0.0 1.0 0.0 SIZE=2000 2000 VAR=mesh 
+
+#NSMOOTH_NEW 1
+
+SMOOTH_LIMIT 1000
+SMOOTH_MODE ALL
+NSMOOTH 1
+
+WRITE_IMAGE NAME=mesh2_orig GEOM=PLANE 0.0 0.0 0.0 0.0 1.0 0.0 SIZE=2000 2000 VAR=mesh 
+
+#WRITE_MLES multi_vor.mles
+

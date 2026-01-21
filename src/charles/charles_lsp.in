@@ -1,0 +1,74 @@
+VERBOSE
+
+#TEST_VOLVIZ
+#RESTART restart_channel.mles 
+#RESTART ../stitch/restart_4x4x4.mles
+#RESTART ../stitch/restart_2e-1x2e-1x2e-1.mles
+#RESTART ../stitch/restart_0.1x0.1x0.1_per.mles
+#RESTART ../stitch/1DGrid_per.mles
+#RESTART ../stitch/restart_thin_per.mles
+RESTART ../stitch/restart.mles #particles.00000001.sles #tmp.sles
+#RESTART ../stitch/restart.one.mles result.00000200.sles
+#INTERP_FROM_RESTART ../stitch/restart.root3.mles result.00000100.sles TRANSLATE 1 1 1
+#POST
+#SNAPSHOT NAME=particles RANGE=1 1 3
+#SNAPSHOT NAME=result RANGE=1 1 3
+#REGISTER_LP_DN3 lsp:xp
+#REGISTER_LP_DN lsp:dp lsp:mp
+#NSTEPS 3
+#WRITE_SNAPSHOT INTERVAL 1 NAME particles VARS lsp:mp # dp,xp and lpocv are automatically included
+#OVERWRITE_STATS false
+#RESULT temp.sles
+
+DEFINE this_gamma 1.4
+DEFINE this_pref (1.0/$(this_gamma))
+DEFINE Ugx 1
+DEFINE rhog 3.51e-3
+
+EOS IDEAL_GAS_LSP
+RHO_REF = $(rhog)
+T_REF   = 300
+P_REF   = $(this_pref)
+GAMMA   = $(this_gamma)
+MU_REF  = 1.8e-3
+
+INIT_RUP $(rhog) $(Ugx) 0 0.0 $(this_pref)
+
+TIMESTEP CFL 1
+CHECK_INTERVAL 1
+
+# bcs
+main.x0 CBC_RUP $(rhog) $(Ugx) 0 0 $(this_pref)
+main.x1 NSCBC_OUTLET_PRESSURE P_REF $(this_pref) SIGMA 0.2 L 0.1
+main.y0 WALL_ADIABATIC
+main.y1 WALL_ADIABATIC
+main.z0 = SLIP
+main.z1 = SLIP
+
+# ====================
+# lsp settings
+# ====================
+LSP.TIME_INT 2WAY_COUPLED
+LSP.INIT NONE
+LSP.MATERIAL SOLID DUST
+LSP.BC main.x1 OUTLET
+
+# ===================
+# Breakup model
+# ===================
+BREAKUP_MODEL NO_BREAKUP
+
+# ===================
+# load balancing
+# ===================
+LOAD_BALANCE LP lsp 5
+
+# =================
+# injector setting
+# =================
+
+#LSP.INJECTOR inj0 GEOM POINT X 0 0 0 V 1 0 0 TYPE COUNT 1 DIST UNIFORM 1.5e-4 TP 320
+LSP.INJECTOR inj0 GEOM BOX X -0.9 0.9 -0.9 0.9 -0.9 0.9 V 1 1 1 TYPE MDOT 5e-3 DIST RR COUNT_DIST 2e-4 2e-3 7e-4 2 TP 600 
+
+FLUSH_IMAGES 1
+FLUSH_PROBES 1000 # steps b/w flushes

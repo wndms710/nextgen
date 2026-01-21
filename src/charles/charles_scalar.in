@@ -1,0 +1,53 @@
+
+SIMPLE_RESTART CART 0 1 -0.01 0.01 -0.01 0.01 128 1 1
+
+# equation of state ..
+
+EOS IDEAL_GAS
+RHO_REF 1.0
+P_REF (1.0/1.4)
+T_REF 1.0
+MU_REF 0.0
+
+# register a single scalar that blows in ..
+
+REGISTER_SCALAR foo
+
+# also register a residence time scalar
+
+RES_TIME
+
+# set the initial condition
+
+INIT_RUP 1.0 0.0 0.0 0.0 (1.0/1.4)
+INIT foo 0.0
+INIT RES_TIME 0.0
+
+# boundary conditions 
+
+x0 CBC_UPT 0.1 0 0 (1.0/1.4) 1.0 foo 1.0 RES_TIME 0.0
+x1 NSCBC_OUTLET_PRESSURE P_REF (1.0/1.4) L 1.0 SIGMA 0.2
+y0 SLIP
+y1 SLIP
+z0 SLIP
+z1 SLIP
+
+# set the time stepping
+
+TIMESTEP CFL 1.2
+NSTEPS 50000 
+CHECK_INTERVAL 5
+
+
+# introduce any sgs modeling
+# not really active for this 1d test case.. 
+
+SGS_MODEL VREMAN 
+
+# show some diagnostics ..
+
+WRITE_IMAGE INTERVAL 100 NAME images/foo GEOM Z_PLANE_FRAC 0.5 SIZE 1000 200 VAR foo RANGE 0 1
+WRITE_IMAGE INTERVAL 100 NAME images/res_time GEOM Z_PLANE_FRAC 0.5 SIZE 1000 200 VAR RES_TIME RANGE 0 10 
+WRITE_IMAGE INTERVAL 100 NAME images/ux GEOM Z_PLANE_FRAC 0.5 SIZE 1000 200 VAR comp(u,0) RANGE 0 0.1
+
+

@@ -1,0 +1,42 @@
+#=================
+# data name and index range
+#=================
+DATA_PREFIX  = ../../charles/tests/surface1/s1
+DATA_RANGE 1 1 4
+
+#=================
+# reference values
+#=================	
+RHO_REF      = 1.0
+C_REF        = 1.0
+GAMMA        = 1.4
+DT           = 0.01
+
+#=================
+# windowing
+#=================
+WINDOW_TYPE  = HANNING
+#WINDOW_TYPE  = NONE
+
+#=================
+# Wind tunnel velocity
+#=================
+U_COFLOW     = 0.0
+#FFT_OVERLAP 0.75 BANDWIDTH=0.039
+#DEBUG_RETARDED_TIME = 1
+
+
+#=================
+# Zonal Noise Analysis
+#=================
+#ZONAL_NOISE_ANALYSIS NZONE_X = 4  RANGE = 0.0 1.0 1.0 7.0 7.0 12.0 12.0 100
+
+
+#=================
+# Observers (i.e. Microphones)
+#=================
+#OBSERVER NAME=<name> GEOM=ARC x rx ntheta
+OBSERVER NAME=Ring1   GEOM=ARC  10  1   2   OPTIONS=P_HAT
+
+#OBSERVER NAME=<name> GEOM=ROTATING_ARC x y z rx alpha_min alpha_max nalpha ntheta
+OBSERVER NAME=RotArc GEOM=ROTATING_ARC 0.0 0.0 0.0 100 90 150 2 3 OPTIONS=P_HAT

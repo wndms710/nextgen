@@ -1,0 +1,43 @@
+
+===========================================
+# building python wrappers for cti routines
+===========================================
+
+0. wrapper code is in ctimodule.cpp in this dir. There is a test strategy 
+   being developed based on compiling initially with -DWITHOUT_PYTHON to 
+   check the routines, and then, once everything is correct, folloing the
+   next stesp to build and install
+
+1. build the correct Makefile.in (local for now) to describe compiler
+   and linker options. To get these:
+
+       cd ctitest
+       rm -fR build
+       python3 setup.py build
+
+   Then pull the relevant details from the output.
+
+2. back in this directory, build the necessary objects from the cascade source and the wrapper 
+   code in ctimodule.cpp
+
+   	make clean
+  	make
+
+3. you can now test the module by cd'ing to the directory with the library file (*.so) and
+   starting python and trying to import it and use it...
+
+   	cd build/lib.$(ARCH)/
+   	python3
+  	>>> import cti
+   	>>> cti.chemtable_load("chemtable-file")
+   	>>> cti.chemtable_lookup("T",0,0,0)
+
+4. back in this directory, use python to install...
+
+   	python3 setup.py install
+
+===========================================
+
+Some Notes: 
+1. -fPIC necesary to build final library on my desktop
+2. 

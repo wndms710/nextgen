@@ -1,0 +1,8 @@
+SURF MSH /Users/civey/runs/cti/vki_blade/VKI-blade-noCooling.msh
+FLIP ALL
+SET_PERIODIC ZONES periodic-z0 periodic-z1 CART 0 0 0.01755
+SET_PERIODIC ZONES periodic-y0 periodic-y1 CART 0 0.0575 0 
+#SET_PERIODIC ZONES inlet outlet CART 0.425 -0.152 0 
+DUMP_ZONES
+WRITE_SBIN vki.sbin
+#INTERACTIVE

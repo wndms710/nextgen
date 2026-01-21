@@ -1,0 +1,27 @@
+# Makefile.cooley
+# makefile for viz/prepro cluster at alcf 
+# using the default mvapich2 module
+
+AR=		ar rv
+RANLIB= 	ar -ts
+EXTRACT =       ar -x
+
+CXX=	 	mpicxx	
+CXX_NO_MPI=     g++
+
+CXXFLAGS=	-O3
+CXXFLAGS+=	-DCTI_VERBOSE3
+
+# the nodes have substantial memory, so it is possible
+# to replicate the surfaces (for stitch) in memory on the 
+# node; this is a bit faster than using the shm support 
+# (likely due to memory contention).  if so, you can comment
+# the line below
+
+CXXFLAGS +=	-DWITH_SHM
+
+PNG_INC = 
+PNG_LIB = 	-lpng12 -lz
+
+CXXFLAGS +=  	-DWITH_PNG $(PNG_INC)
+CLIBS =   	$(PNG_LIB)

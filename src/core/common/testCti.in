@@ -1,0 +1,35 @@
+# this is testCti.in
+# these are some important comments that I want to preserve
+
+VERBOSE
+
+DEFINE A 478392 # this is a
+DEFINE B $(A)/2 # this is B
+
+I2 432789243
+
+# and these are some other comments...
+PART NAME=main SURF=BOX 0 1 0 1 0 1 SCALE $(B)/3
+
+# an example of a nested loop
+
+#DEFINE K 31 # this will cause the loop to fail
+FOR K = 1 TO 9 BY 2
+    DEFINE K 21 # this should produce a warning because K is the loop variable...
+    WRITE_IMAGE NAME=images/magu$(K) GEOM X_PLANE_FRAC $(K)/26+time*0.011 VAR mag(u) RANGE 5 7*2
+    FOR J = $(K) TO 11 BY 1
+        WRITE_IMAGE NAME=images/magu$(K)_$(J) GEOM Y_PLANE_FRAC $(K)/26+$(J)/8 VAR mag(u)
+    ENDFOR # FOR J
+ENDFOR # FOR K
+
+UNDEF K # this should produce a warning
+
+# defines must 
+#DEFINE XC sdfjk=fsjdklsfd sfd $(B)*$(B) # and this
+#THIS IS XC $(XC) THAT WAS XC
+
+# future loop capabilities:
+# 1. formatting for 001, 002? # for now, use multiple loops
+# 2. doubles for loop variable # for now, loop variables integer
+# 3. use of a set for loop variable: e.g. FOR K IN [3,42,678,25,blah,46] # not yet
+

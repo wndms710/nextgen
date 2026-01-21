@@ -1,0 +1,103 @@
+#!/usr/bin/env python
+
+import numpy as np
+import sys
+import re
+
+def load_and_thin(fname):
+
+  coords = None
+  f     = open(fname,'r')
+  for ii in range(0,2):
+
+    count = 0
+    f.seek(0)
+    for aline in f.readlines():
+   
+      fstr = re.split(' ', aline)
+      if (fstr[0] == '#'): 
+        # this is a comment line... check if the sles is found
+        if ( fstr[1] == "sles"):
+          # found a new chunk
+          count = 0
+      else:
+        if ( ii == 0):
+          count = count +1 
+        else:
+          coords[count,0] = float(fstr[0])
+          coords[count,1] = float(fstr[1])
+          coords[count,2] = float(fstr[2])
+          coords[count,3] = float(fstr[3])
+          count = count + 1
+
+    print "count = ", count
+    
+    if ( ii == 0):
+      coords = np.zeros([count,4])
+
+  return coords
+
+  
+def transpose_data(fname,var_name):
+
+  coords = load_and_thin(fname+".README") 
+  dat    = np.loadtxt(fname+"."+var_name)
+
+  # check if only a single row; treat differently
+  b_onerow = False
+  if (len(dat.shape) == 1):
+    b_onerow = True 
+
+  if not b_onerow:
+    n_c    = len(coords[:,0])
+    n_d    = len(dat[-1,:])-3
+
+    print " check sizes (should be same): ", n_c, n_d
+    print " taking data from terminal time: ", dat[-1,1]
+
+    if ( n_c != n_d):
+      raise Error
+
+    tmp = np.zeros([n_c,4])
+    tmp[:,0] = coords[:,1]
+    tmp[:,1] = coords[:,2]
+    tmp[:,2] = coords[:,3]
+    tmp[:,3] = dat[-1,3:]
+
+  else:
+    n_c    = len(coords[:,0])
+    n_d    = len(dat)-3
+
+    print " check sizes (should be same): ", n_c, n_d
+    print " taking data from terminal time: ", dat[1]
+
+    if ( n_c != n_d):
+      raise Error
+
+    tmp = np.zeros([n_c,4])
+    tmp[:,0] = coords[:,1]
+    tmp[:,1] = coords[:,2]
+    tmp[:,2] = coords[:,3]
+    tmp[:,3] = dat[3:]
+
+  np.savetxt(fname+".transpose.dat",tmp)
+
+
+
+if (len(sys.argv) != 3):
+  print "========================================="
+  print " ./transpose_probe <file-prefix>  <var-name>"
+  print "   "
+  print " this is output a file that is <file-prefix>.transpose.dat which "
+  print " contains the data in the following format " 
+  print "  <x> <y> <z> <value> "
+  print "    "
+  print " this can be invoked as follows: "
+  print "    "
+  print " > ./transpose_probe probe/probe1 p_avg"
+  print "    " 
+  print " which will output probe/probe1.transpose.dat"
+  print "========================================="
+  sys.exit()
+
+transpose_data(sys.argv[1],sys.argv[2])

@@ -1,0 +1,61 @@
+VERBOSE
+
+RESTART ../stitch/restart.mles
+DEFINE N 8
+#SIMPLE_RESTART CART 0 $(N) 0 1 0 1 $(N) 1 1
+#SIMPLE_RESTART CART 0 1 0 1 0 1 $(N) $(N) $(N)
+#TEST_CASE = LIQUID_JET
+
+DEFINE rho_l = 713.0 #[kgg/m^3]
+DEFINE rho_g = 22.8 #[kgg/m^3]
+DEFINE p_ref = 0.0
+DEFINE u_l = 13.32 #[m/s]
+DEFINE u_g = 0.0
+
+#EOS parameter
+MU_REF0 = 0.0005736085
+MU_REF1 = 0.000023164
+RHO_REF0 = $(rho_l)
+RHO_REF1 = $(rho_g)
+P_REF = 0.0
+SOS0 = 1200 #speed of sound [m/s]
+SOS1 = 340
+
+SIGMA = 0.0243
+gravity = 0 0.0 0
+
+#NSTEPS 18500
+CHECK_INTERVAL = 1
+#TIMESTEP DT 1.0E-3
+TIMESTEP CFL 0.5
+
+P_ZERO 1.0E-10
+P_MAXITER 15
+PRESSURE_SOLVER = TRILINOS
+#PRESSURE_SOLVER = JACOBI
+#PRESSURE_SOLVER = BCGSTAB
+#PRESSURE_SOLVER = AMG
+
+SGS_MODEL VREMAN
+
+inlet INLET $(rho_l) $(rho_g) 1.0 $(u_l) 0.0 0.0
+outlet OUTLETV
+inj_wall = WM_ALG_WALL
+tip_wall = SLIP
+sac_wall = WALL
+needle_wall = WALL
+exit_wall = SLIP
+
+
+WRITE_RESULT 2000
+#INIT u 0.0 0.0 0.0
+#INIT vof 0.0
+#INIT rho0 $(rho_l)
+#INIT rho1 $(rho_g)
+#INIT p $(p_ref)
+#INIT rhoY0 0.0
+#INIT rho $(rho_g)
+#STATS = vof u rho rhoY0 lvd lsd
+
+
+

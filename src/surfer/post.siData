@@ -1,0 +1,184 @@
+"\
+\"parameters\": [ \n\
+    { \n\
+      \"name\": \"RESTART\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<mesh>.mles [<solution>.sles]\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CLEAR\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_JOURNAL\", \n\
+      \"children\": [ \n\
+        \"VERBOSE\" \n\
+      ], \n\
+      \"args\": \"journal.in\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_JSON\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"BITS\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NAME\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"filename\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_IMAGE\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"RGB_MODE\", \n\
+        \"GEOM\", \n\
+        \"CAMERA\", \n\
+        \"TARGET\", \n\
+        \"VAR\", \n\
+        \"MESH_ON_SURFACE\", \n\
+        \"NO_GEOM_BLANKING\", \n\
+        \"SIZE\", \n\
+        \"UP\", \n\
+        \"BLANK\", \n\
+        \"WIDTH\", \n\
+        \"RANGE\", \n\
+        \"HIDE_SUBZONES\", \n\
+        \"HIDE_ZONES\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RGB_MODE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"DATA or NORMALS\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"GEOM\", \n\
+      \"children\": [ \n\
+        \"Z_PLANE_FRAC\", \n\
+        \"Y_PLANE_FRAC\", \n\
+        \"X_PLANE_FRAC\", \n\
+        \"PLANE_FRAC\", \n\
+        \"PLANE\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"Z_PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"Y_PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"X_PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"nx ny nz frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<x> <y> <z> <nx> <ny> <nz>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CAMERA\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TARGET\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"VAR\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"CV_DATA\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"MESH_ON_SURFACE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NO_GEOM_BLANKING\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SIZE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"ni nj\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"UP\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"ex ey ez\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"BLANK\", \n\
+      \"children\": [ \n\
+        \"PLANE\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WIDTH\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"width\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RANGE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"var_min var_max\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HIDE_SUBZONES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"ALL or comma-separated-subzones\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HIDE_ZONES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"ALL or comma-separated-zone-ids\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HELP\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"any command\" \n\
+    } \n\
+  ]\
+"

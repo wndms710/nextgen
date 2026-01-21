@@ -1,0 +1,60 @@
+#
+VERBOSE
+
+# for c=200, p=28,571, gamma=1.4, rho=1, c = sqrt(gamma*p/rho)
+DEFINE this_p 28571
+DEFINE this_T 300
+DEFINE this_rho 1
+DEFINE this_interval_image 25
+DEFINE this_interval_stats 50
+DEFINE this_interval_result 15000
+DEFINE this_interval_check 20
+DEFINE this_interval_probe 1000
+DEFINE this_size 20
+
+RHO_REF $(this_rho)
+P_REF $(this_p)
+T_REF $(this_T)
+MU_REF 3.333333e-3
+GAMMA 1.4
+
+RESTART ./box.mles
+INIT_RUP $(this_rho) 0 0 0 $(this_p)
+
+EOS=IDEAL_GAS_LSP
+
+NSTEPS=200
+CHECK_INTERVAL=$(this_interval_check)
+TIMESTEP = CFL 1
+
+SGS_MODEL VREMAN
+
+#=== boundary conditions ====
+main.x0 = WALL_ADIABATIC
+main.x1 = WALL_ADIABATIC
+main.y0 = WALL_ADIABATIC
+main.y1 = WALL_ADIABATIC
+main.z0 = WALL_ADIABATIC
+main.z1 = WALL_ADIABATIC
+cyl.x0  = WALL_ADIABATIC
+cyl.x1  = WALL_ADIABATIC
+cyl.cyl = WALL_ADIABATIC
+#=============================
+
+#=============================
+# LSP 
+#=============================
+LSP.TIME_INT 1WAY_COUPLED
+LSP.MATERIAL SOLID USER NAME=DUST1
+DUST1.RHO    766
+DUST1.CP     800
+DUST1.K      1.4
+DUST1.TMELT  1610
+
+LSP.BC main.x1 OUTLET
+
+LSP.ELLIPSOID_DRAG TRUE
+
+LSP.INJECTOR inlet_g GEOM POINT X 0 0 0.5 N 1 0 0 VMAG 1 TYPE COUNT 1 DIST UNIFORM 1e-3 TP $(this_T) SHAPE ELLIPSOID EF 1 1
+
+WRITE_IMAGE NAME=./dump/images_drag/lsp INTERVAL=$(this_interval_image) TARGET 0.005554479081183672 0.05037340149283409 0.05757897347211838 CAMERA 1.1189696788787842 -0.9995656609535217 0.8687164187431335 UP -0.3302488625049591 0.3323100507259369 0.8834623694419861 SIZE 1336 790 WIDTH 5.858278751373291 HIDE_SUBZONES 5,1,3,2 GEOM PLANE 0 0.8800004720687866 0 0 1 0 VAR mag(u) VAR_ON_PARTICLE lsp PARTICLE_MAGNIFICATION $(this_size)

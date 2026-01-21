@@ -1,0 +1,14 @@
+VERBOSE
+
+#SURF ./triangulate.sbin
+#SURF /shared/honda_ice/mesh00/motion/invalve.sbin
+#TEST_HCP2D ZONE * DELTA 0.001
+
+#SURF ./valve_with_base.sbin
+#TEST_HCP2D ZONE base DELTA 0.0005
+
+#SURF /shared/honda_ice/mesh00/motion/piston.sbin
+#TEST_HCP2D ZONE * DELTA 0.001
+
+SURF /home/feham/runs/sduct/sd-2.sbin
+TEST_HCP2D ZONE wall_sd_b,wall_sd_a,sd_patches DELTA 0.002

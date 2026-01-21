@@ -1,0 +1,20 @@
+# ================
+# parts
+# ================
+
+# root 3 - truncated octahedron (default) 
+HCP_PACKING ROOT3
+DEFINE LX 2
+DEFINE NX 2
+DEFINE DELTA ($(LX)/$(NX))
+DEFINE NZ 2
+DEFINE LZ ($(NZ)*$(DELTA)*sqrt(3.0)/2.0)
+HCP_DELTA = $(DELTA)
+
+# channels and boundary layers...
+PART SURF BOX -$(LX) $(LX) -1 1 -$(LZ) $(LZ) PERIODIC_X PERIODIC_Z \
+     PTS HCP 
+
+NSMOOTH 2
+
+WRITE_RESTART dump/restart.mles

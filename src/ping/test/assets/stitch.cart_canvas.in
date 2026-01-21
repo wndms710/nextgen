@@ -1,0 +1,5 @@
+#build a grid with one cv per pixel for image testing
+#PART BOX_WITH_CART X0 0 0 -0.5 X1 600 400 0.5 N 600 400 1 
+PART BOX_WITH_CART X0 0 0 -0.5 X1 16 16 0.5 N 16 16 1 
+NSMOOTH=0
+WRITE_RESTART cart_canvas.mles

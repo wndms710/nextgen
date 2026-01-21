@@ -1,0 +1,26 @@
+# use generate_pts3.exe to generate various 1D point spacings, and then
+# build x-periodic 1D test cases with this stitch.in
+
+DEFINE LX 3
+DEFINE LY 0.1
+DEFINE LZ 0.1
+
+#DEFINE CASE 32to16
+#DEFINE CASE 48to24
+#DEFINE CASE 64to128
+#DEFINE CASE 96to48
+#DEFINE CASE 48
+#DEFINE CASE 96to48-long
+DEFINE CASE 96to48-long-smooth
+
+PART main SURF SIMPLE_BOX -$(LX) $(LX) -$(LY) $(LY) -$(LZ) $(LZ) PERIODIC_X PTS BIN pts.1D-$(CASE).pbin 
+
+NSMOOTH 0
+#INTERACTIVE
+
+#SMOOTH_MODE FORCE_ALL
+##NSMOOTH 3
+#NSMOOTH 10
+
+WRITE_MLES 1D-$(CASE).mles
+#WRITE_MLES 1D-$(CASE)-smooth10.mles

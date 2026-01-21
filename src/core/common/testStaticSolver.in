@@ -1,0 +1,187 @@
+
+VERBOSE
+
+#CHT.RHO TABLE \
+#        100 8220.93 \
+#        200 9220.93 \
+#        300 10720.93 
+
+#CHT.RHO CONSTANT 8220.93
+
+#CHT.RHO = CLIPPED_CUBIC \
+#        COEFF 3.3153 0.019585 1.6608E-7 -1.6941E-21 \
+#        RANGE 266.1 1249.7 
+
+#CHT.RHO = CLIPPED_CUBIC \
+#        COEFF 506.38 -0.1289 0.00015095 9.9523E-8 \
+#        RANGE 303.65 1361.54
+
+# to test alpha VOLVIS capability, you can either add "TEST_VOLVIS" to the input file, or
+# add the keyword "VOLVIS" to the WRITE_IMAGE line...
+#TEST_VOLVIS
+
+
+#RESTART ../../stitch/restart.mles
+#RESTART ../../stitch/restart_periodic.mles
+#RESTART ../../stitch/box_y0.mles
+#RESTART ../../stitch/box.025.mles
+#RESTART ../../stitch/box.mles
+#RESTART ../../stitch/restart_refined_box_pxy.mles
+#INTERACTIVE
+#RESTART ../../stitch/restart.tri_strand.mles
+ZERO 1E-6
+MAXITER 100
+NSMOOTH 4
+RELAX 0.7
+AGGLOMERATION_FACTOR 8
+SPLIT_ORPHANED_COLORS true
+SMOOTHER SGS
+MAXITER_COARSEST 100
+SOLVER_COARSEST CG
+NCG 2
+DEFINE N 16
+#SIMPLE_RESTART CART 0 $(N) 0 1 0 1 $(N) 1 1 
+SIMPLE_RESTART CART 0 1 0 1 0 1 $(N) $(N) $(N)
+#SIMPLE_RESTART CART 0 1 0 1/$(N) 0 1/$(N) $(N) 1 1 
+#RESTART ../../stitch/restart.mles
+#RESTART ../../stitch/restart.med.mles
+#RESTART ../../stitch/restart.2x2x1_cart_pxy.mles NCOPY 1 1 0
+#WRITE_DATA INTERVAL 1 NAME test_2x2x1 FORMAT VTK GEOM ALL VARS 
+#INTERACTIVE
+
+#RESTART ../../stitch/sector_flat.mles
+#RESTART ../../stitch/restart.mles
+#RESTART doubly_periodic_sector.mles
+#RESTART periodic_sector.mles
+nozzle_external_wall WALL
+nozzle_lip_wall WALL
+nozzle_internal_wall WALL
+far_field WALL
+outflow WALL
+coflow_inflow WALL
+nozzle_inflow WALL
+nozzle_internal_trip WALL
+nozzle_internal_pipe WALL
+Cube0_2 WALL
+
+#WRITE_IMAGE NAME mesh INTERVAL 1 TARGET -0.5396769046783447 0.9944682717323303 -0.05171939358115196 CAMERA 0.7593613862991333 1.744468331336975 0.8143061399459839 UP -0.4330126941204071 -0.2499999850988388 0.8660253882408142 SIZE 1216 630 WIDTH 6.511161804199219 GEOM PLANE 0 0 0 0.75 0.4330126941204071 0.5 VAR mesh CELL_FLOODED
+
+#RESTART ../../stitch/preccinsta.mles
+#DEFINE my_vars *:area_bf *:x_bf
+#DEFINE my_zones x0 x1 y0 y1 z0 z1
+#VOLUMETRIC_PROBE INTERVAL 1 NAME vp_test GEOM SPHERE 0.25 0.25 0.25 0.5 VARS comp(x_cv,0) comp(x_cv,1) comp(x_cv,2) vol_cv
+#VOLUMETRIC_PROBE INTERVAL 1 NAME vp_test2 GEOM BOX -0.25 0.25 -0.25 0.25 -0.25 0.25 VARS comp(x_cv,0) comp(x_cv,1) comp(x_cv,2) vol_cv
+
+#WRITE_DATA INTERVAL 1 NAME test_tec_3d FORMAT TECPLOT GEOM ALL VARS vol_cv x_cv
+#WRITE_DATA INTERVAL 1 NAME test_tec_bf FORMAT TECPLOT GEOM FAZONE x0 x1 y0 y1 z0 z1 VARS vol_cv x_cv *:area_bf *:n_bf
+#WRITE_DATA INTERVAL 1 NAME test_vtk_2d FORMAT VTK GEOM SPHERE 0 0 0 0.5 VARS vol_cv x_cv
+#WRITE_DATA INTERVAL 1 NAME test_all_with_zones_dt FORMAT ENSIGHT DUAL GEOM ALL_WITH_ZONES VARS vol_cv x_cv
+#WRITE_DATA INTERVAL 1 NAME test_all_with_zones FORMAT ENSIGHT GEOM ALL_WITH_ZONES VARS vol_cv x_cv
+#FLAG_OPEN_FACES_HACK
+#WRITE_DATA INTERVAL 1 NAME test_dt FORMAT ENSIGHT DUAL GEOM SPHERE 0.5 0.5 0.5 0.25 VARS vol_cv #x_cv
+#WRITE_DATA INTERVAL 1 NAME test_dt FORMAT STL DUAL GEOM SPHERE 0.5 0.5 0.5 0.25 VARS vol_cv #x_cv
+#WRITE_DATA INTERVAL 1 NAME test_ensight FORMAT ENSIGHT DUAL GEOM SPHERE 0.5 0.5 0.5 0.25 VARS vol_cv mag(x_cv) x_cv x_vv
+#WRITE_DATA INTERVAL 1 NAME test_vtk FORMAT VTK DUAL GEOM SPHERE 0.5 0.5 0.5 0.25 VARS vol_cv mag(x_cv) x_cv x_vv
+#WRITE_DATA INTERVAL 1 NAME test_tecplot FORMAT TECPLOT DUAL GEOM SPHERE 0.5 0.5 0.5 0.25 VARS vol_cv x_cv 
+#WRITE_DATA INTERVAL 1 NAME test_vd FORMAT ENSIGHT GEOM _PHERE 0.5 0.5 0.5 0.5 VARS vol_cv x_cv
+#WRITE_DATA INTERVAL 1 NAME test6 FORMAT VTK GEOM IN_SBIN ../../surfer//sphere.sbin VARS vol_cv
+#WRITE_DATA INTERVAL 1 NAME test5 FORMAT VTK GEOM SBIN ../../surfer//sphere.sbin VARS vol_cv
+#WRITE_DATA INTERVAL 1 NAME test4 FORMAT VTK GEOM UNDER_ISO mag(x_cv) 0.5 VARS vol_cv
+#WRITE_DATA INTERVAL 1 NAME test FORMAT TECPLOT GEOM FAZONE $(my_zones) VARS $(my_vars)
+#WRITE_DATA INTERVAL 1 NAME test FORMAT TECPLOT GEOM SPHERE 0 0 0 0.5 VARS vol_cv
+#WRITE_DATA INTERVAL 1 NAME test2 FORMAT TECPLOT GEOM IN_SPHERE 0 0 0 0.5 VARS vol_cv
+#WRITE_DATA INTERVAL 1 NAME test2 FORMAT STL GEOM SPHERE 0.5 0.5 0.5 0.2 VARS vol_cv
+#WRITE_DATA INTERVAL 1 NAME test3 FORMAT TECPLOT GEOM FAZONE x0 x1 y0 y1 z0 z1 VARS *:area_bf *:x_bf
+#WRITE_DATA INTERVAL 1 NAME ensight_bf FORMAT ENSIGHT DUAL GEOM FAZONE main.x0 main.y0 main.z0 VARS *:area_bf *:x_bf const_cv(1) vol_cv x_cv 
+#WRITE_DATA INTERVAL 1 NAME ensight_all_bf FORMAT ENSIGHT DUAL GEOM ALL_WITH_ZONES VARS const_cv(1) vol_cv x_cv 
+#WRITE_DATA INTERVAL 1 NAME test_vd_bf FORMAT ENSIGHT GEOM FAZONE main.x0 main.y0 VARS vol_cv *:area_bf *:x_bf x_cv
+#WRITE_DATA INTERVAL 1 NAME test FORMAT VTK GEOM ALL VARS max(vol_cv,1.0) max(1.0,vol_cv) min(vol_cv,1.0) min(1.0,vol_cv) vol_cv 
+#WRITE_DATA INTERVAL 1 NAME test FORMAT VTK GEOM TCONE -0.5 0 0 0.5 0.5 0 0 0.5 VARS vol_cv
+#WRITE_DATA INTERVAL 1 NAME test2 FORMAT VTK GEOM TCONE_CAPS -0.5 0 0 0.5 0.5 0 0 0.5 VARS vol_cv
+
+#RESTART ../../stitch/restart.mles result.00000002.sles
+#RESTART restart.mles
+
+#WRITE_DATA INTERVAL 1 NAME lap FORMAT VTK GEOM PLANE_X 0 VARS lap(x_cv) div(grad(x_cv)) 
+#WRITE_DATA INTERVAL 1 NAME grad FORMAT TECPLOT GEOM ALL VARS grad(dot(x_cv,x_cv)) grad(comp(x_cv,0)) 
+#WRITE_DATA INTERVAL 1 NAME curl FORMAT TECPLOT GEOM ALL VARS curl(grad(vol_cv)) curl(x_cv) 
+#WRITE_DATA INTERVAL 1 NAME full_check FORMAT TECPLOT GEOM ALL VARS mag(curl(curl(x_cv))-(grad(div(x_cv))-lap(x_cv)))
+
+#WRITE_RESULT 1
+
+#RESTART /Users/civey/runs/cti/fluent/baseline_ascii.mles
+#INTERP_FROM_RESTART /Users/civey/runs/cti/fluent/baseline_ascii.cas /Users/civey/runs/cti/fluent/baseline_ascii.dat
+#RESTART ../../stitch2/restart.mles result.00000000.sles 
+#RESTART ../../stitch2/restart.mles result.00000001.sles 
+
+#WRITE_DATA NAME blah1 INTERVAL 1 FORMAT=ASCII VARS comp(x1:x_bf,2) x1:area_over_delta_bf comp(y1:x_bf,1) z1:area_over_delta_bf 
+#WRITE_DATA NAME blah2 INTERVAL 1 FORMAT=TECPLOT GEOM FAZONE x1 y1 z1 VARS comp(*:x_bf,2)*comp(*:x_bf,1) *:area_over_delta_bf 
+
+#TEST_EVAL
+
+#TEST_DN33_UPDATE
+
+# bcs
+
+x0 WALL
+x1 WALL
+y0 WALL
+y1 WALL
+z0 WALL
+z1 WALL
+SIMPLE_BOX WALL
+main.x0 WALL
+main.x1 WALL
+main.y0 WALL
+main.y1 WALL
+main.z0 WALL
+main.z1 WALL
+
+preccinsta_clean.stl WALL
+Closed_Open_Edge_Group_0 WALL
+inlet WALL
+
+# defines
+#DEFINE case M21
+#DEFINE c (1.0/1000) # comment here should be fine
+#DEFINE interval 50
+#DEFINE 
+#DEFINE x_circle 0.09
+#DEFINE 1.1*1.23
+
+# example of recursive define -- not a good idea!
+#DEFINE a $(b)
+#DEFINE b $(a)*sqrt(2)
+
+#REGISTER_CV_DN rho
+#REGISTER_CV_DN3 rhou
+
+#WRITE_IMAGE 
+
+#DEFINE case probe21
+
+#PROBE NAME=$(case)/Probe_xm2.5 INTERVAL=$(interval) GEOM=CIRCLE_XRN $(x_circle) 1.1 36 VARS=mag(x_vv) x_cv r_vv sda
+#PROBE NAME=blah_$(case)/Probe_xm3.5 INTERVAL=$(interval) GEOM=CIRCLE_XRN 0.1 0.7 36 VARS=r_vv mag(x_cv) dsa x_vv 
+
+#POINTCLOUD_PROBE NAME=pcprobes/test INTERVAL 1 PRECISION FLOAT GEOM FILE check.txt VARS vol_cv r_vv comp(x_no,0) comp(x_cv,0)
+# INTERVAL is WRITE_INTERVAL...
+#
+
+FLUSH_IMAGES 1
+
+#CONDITIONAL_PROBE NAME=rot_rec GEOM ROTATED_RECTANGLE 1 0 0 0.5 1 0.25 SAMPLE_INTERVAL=1 WRITE_INTERVAL=1 RESET_AFTER_WRITE CVAR=comp(x_cv,1) VARS=comp(x_cv,0) comp(x_cv,1) comp(x_cv,2)
+#CONDITIONAL_PROBE NAME=test4 SAMPLE_INTERVAL=1 WRITE_INTERVAL=1 RESET_AFTER_WRITE GEOM BOX -0.75 -0.25 -1 1 -1 1 CVAR=comp(x_cv,0) VARS comp(x_cv,0) comp(x_cv,1) comp(x_cv,2)
+#PDF_PROBE NAME pdfprobes/x SAMPLE_INTERVAL=1 WRITE_INTERVAL=1 RESET_AFTER_WRITE VAR=comp(x_cv,0)
+#PDF_PROBE NAME pdfprobes/vx WVAR=vol_cv SAMPLE_INTERVAL=1 WRITE_INTERVAL=1 RESET_AFTER_WRITE VAR=comp(x_cv,0)
+#PDF_PROBE NAME pdfprobes/ax WVAR=x0:area_bf SAMPLE_INTERVAL=1 WRITE_INTERVAL=1 RESET_AFTER_WRITE VAR=comp(x0:x_bf,0)
+#PDF_PROBE NAME pdfprobes/ix SAMPLE_INTERVAL=1 WRITE_INTERVAL=1 RESET_AFTER_WRITE VAR=comp(x0:x_bf,0)
+#CONDITIONAL_PROBE NAME=test SAMPLE_INTERVAL=1 WRITE_INTERVAL=1 RESET_AFTER_WRITE CVAR=comp(x_cv,0) CVAR_2=const_cv(2) VARS=comp(x_cv,0) comp(x_cv,1) comp(x_cv,2)
+#$for $a = 1 to 1000 by 1 
+#CONDITIONAL_PROBE NAME=test$a SAMPLE_INTERVAL=1 WRITE_INTERVAL=1 RESET_AFTER_WRITE CVAR=comp(x_cv,0) CVAR_2=comp(x_cv,1) NBIN 10000 NBIN_2 35 VARS=comp(x_cv,0) comp(x_cv,1) comp(x_cv,2)
+#$endfor
+#CONDITIONAL_PROBE NAME=const SAMPLE_INTERVAL=1 WRITE_INTERVAL=1 CVAR=const_cv(1) VARS=comp(x_cv,0)
+#CONDITIONAL_PROBE NAME=cprobes/w_yz SAMPLE_INTERVAL=1 WRITE_INTERVAL=1 RESET_AFTER_WRITE WVAR=vol_cv CVAR=comp(x_cv,1) CVAR_2=comp(x_cv,2) VARS=x_cv comp(x_cv,0) comp(x_cv,1)
+#CONDITIONAL_PROBE NAME=cprobes/w_y SAMPLE_INTERVAL=1 WRITE_INTERVAL=1 RESET_AFTER_WRITE WVAR=abs(vol_cv) CVAR=comp(x_cv,1) VARS=comp(x_cv,0)
+#CONDITIONAL_PROBE NAME=cprobes/y GEOM BOX -0.0\05 -0.001 -10 10 -10 10 SAMPLE_INTERVAL=2 WRITE_INTERVAL=100 RESET_AFTER_WRITE CVAR=comp(x_cv,1) VARS=comp(x_cv,1) mag(x_cv) r_vv
+#CONDITIONAL_PROBE NAME=cprobes/y GEOM TSECTOR_Y 0 0 0.78539816339 2.35619449019 0 1.0 SAMPLE_INTERVAL=1 WRITE_INTERVAL=1 CVAR=sqrt(comp(x_cv,0)*comp(x_cv,0)+comp(x_cv,2)*comp(x_cv,2)) RANGE 0.25 0.75 VARS=r_vv
+FLUSH_PROBES 1

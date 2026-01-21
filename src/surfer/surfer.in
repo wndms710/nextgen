@@ -1,0 +1,56 @@
+#
+VERBOSE
+
+DEFINE L 21
+SURF BOX -$(L) $(L) -$(L) $(L) -$(L) $(L)*2
+
+#RUN_DIAGNOSTICS WITH_DETAILS \
+#   CHECK_SELF_INTERSECTIONS SEED_SAMPLES 500 \
+#   OUTPUT_FORMAT SBIN NBR_LAYERS 5
+#SET_ST_FLAG TRI_IDS 0,10
+#WRITE_FLAGGED_TRIS_TECPLOT
+
+#SURF SBIN cube_-1_to_1_delta_0pt2.sbin
+
+#SURF CAS ../stitch/cartesian_64_200_4.cas
+#WRITE_SBIN cartesian_64_200_4.sbin
+
+#SURF STL /home/ham/stls/aneurysm.stl
+#SURF SBIN ../stitch/check.sbin
+#SURF SBIN ../stitch/assets/box.periodic.sbin
+#SURF SBIN ../stitch/assets/vki.periodic.sbin
+#SURF SBIN ../stitch/assets/multi_vor.sbin
+#SURF STL /home/ham/runs/lee_afs_injector/stretch_exit/mySTL.stl
+
+#WRITE_IMAGE NAME=full SIZE 5000 5000 SHOW_OPEN_EDGES 
+
+#BLANK PLANE 0 0 0 0 1 0
+
+#WRITE_JSON NAME 12323454356
+
+#SURF STL /Users/civey/surfaces/stl/gelato.stl
+#SURF STL /Users/civey/surfaces/stl/aneurysm.stl
+#SURF SBIN /Users/civey/DOUBLY_PERIODIC.sbin
+#DELETE_ISOLATED_NODES
+#SCALE SX 0.001 0.001 0.001 ALL 
+#MORPH_CORNER 
+
+#WRITE_IMAGE NAME=full SIZE 2000 3000 SHOW_OPEN_EDGES
+#WRITE_IMAGE NAME=blank65 SIZE 2000 3000 BLANK PLANE 65 45 45 1 0 0
+#WRITE_IMAGE NAME=blank66 SIZE 2000 3000 BLANK PLANE 66 45 45 1 0 0
+#WRITE_IMAGE NAME=blank67 SIZE 2000 3000 BLANK PLANE 67 45 45 1 0 0
+#WRITE_IMAGE NAME=blank68 SIZE 2000 3000 BLANK PLANE 68 45 45 1 0 0
+
+#WRITE_IMAGE NAME <> CAMERA <x> <y> <z> TARGET <x> <y> <z> WIDTH <double> UP <nx> <ny> <nz> VAR sqrt(phi) RANGE <min> <max> COLORMAP <cm> MESH BLANK <> <> <> <> <> <> 
+#TARGET <> <> <> 
+#WRITE_IMAGE NAME INTERVAL GEOM PLANE 
+#WRITE_IMAGE GEOM ZONE ALL VAR phi CAMERA TARGET UP  
+#WRITE_IMAGE GEOM ISO P 123 VAR   
+#WRITE_BIN honda_fit_caseA.sbin
+#SURF RESTART ../stitch/restart.mles ../charles/result.00000100.sles
+#SURF SBIN ../stitch/check.sbin
+#SURF RESTART ./restart.mles ./result.sles
+#INTERACTIVE
+
+
+

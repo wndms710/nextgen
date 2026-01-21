@@ -1,0 +1,11 @@
+HCP_POINT_DEV
+SKIP_CHECK
+#PART main SURF SBIN /home/feham/codes/ideas/motion/impeller.sbin PTS HCP
+PART main SURF SBIN /home/feham/runs/vawt/vwt.sbin
+#PART main SURF SBIN /home/feham/runs/gb_jet_nextgen/gp_jet.sbin PTS HCP
+#PART main SURF SBIN ../../../../runs/gb_jet_nextgen/gp_jet.sbin PTS HCP
+#PART main SURF SBIN /home/feham/runs/9ha02/field/problem2_combined_zoned.periodic.sbin PTS HCP
+#PART main SURF SBIN /Users/fham/runs/9ha02/shoreh2/problem2_combined_zoned.periodic.sbin PTS HCP
+#/home/ham/runs/gb_jet_nextgen/gp_jet.sbin
+HCP_DELTA = 0.05
+INTERACTIVE

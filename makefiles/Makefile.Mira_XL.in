@@ -1,0 +1,27 @@
+# Makefile.mira
+# makefile for bgq of alcf
+
+AR=		powerpc64-bgq-linux-ar rv
+RANLIB= 	powerpc64-bgq-linux-ar -ts
+EXTRACT =       powerpc64-bgq-linux-ar -x
+
+CXX=		mpixlcxx
+CXX_NO_MPI=     xlc++
+
+#CXX=		mpicxx -dynamic
+#CXX_NO_MPI=	bgclang++
+
+#CXXFLAGS=  -O2 -g -DCTI_VERBOSE3
+CXXFLAGS=  -O4 -qhot -qtune=qp -qarch=qp -qprefetch -qunroll=yes -qreport
+CXXFLAGS +=	-DCTI_VERBOSE3
+CXXFLAGS +=	-DNO_CTI_PREFETCH
+
+PNG_INC = -I/home/stbose/libs/libpng/include -I/home/stbose/libs/zlib/include -DWITH_PNG
+PNG_LIB = -L/home/stbose/libs/libpng/lib -L/home/stbose/libs/zlib/lib -lpng12 -lz
+
+CXXFLAGS += $(PNG_INC) -DWITH_PNG 
+CXXFLAGS +=	-DWITH_SHM
+CLIBS += $(PNG_LIB)
+
+CXXFLAGS_NO_MPI=	$(CXXFLAGS)
+CLIBS_NO_MPI += 	$(PNG_LIB)

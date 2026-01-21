@@ -1,0 +1,16 @@
+
+RESTART ../stitch/restart_n256.mles
+
+SWEEP_FREQUENCY START 0.99 DELTA 0.00001 END 1.01 
+
+# speed of sound set by the following priority:
+# 1. sos_avg if present, unless USE_INSTANTANEOUS_SOS, then sos
+# 2. sqrt(gamma*R*T_avg) if T_avg present, unless USE_INSTANTANEOUS_T, then sqrt(gamma*R*T)
+# 3. constant sos
+#USE_INSTANTANEOUS_SOS
+#USE_INSTANTANEOUS_T
+#CONSTANT_SOS
+
+X_SEED 0.4777 0 0
+SOLVER_ZERO 1.0e-8
+MAX_ITER 100000

@@ -1,0 +1,55 @@
+#=================
+# data name and index range
+#=================
+DATA_PREFIX  = ../jet/surfaces/s2
+DATA_RANGE 50100 100 100000
+
+
+#=================
+# reference values
+#=================	
+RHO_REF      = 1.0
+C_REF        = 1.0
+GAMMA        = 1.4
+DT           = 0.0025
+
+
+#=================
+# dimensional values
+#=================
+#RHO_CHAR     = 1.2
+#C_CHAR       = 343.8
+#L_CHAR       = 1.0
+#U_CHAR       = 0.6666667
+#SPECTRA_UNIT = dB
+#OASPL_RANGE  = 10 3000
+#MAX_FREQUENCY = 1.0
+
+
+#=================
+# windowing
+#=================
+WINDOW_TYPE  = HANNING
+#WINDOW_TYPE  = NONE
+
+
+#=================
+# Wind tunnel velocity
+#=================
+U_COFLOW     = 0.0
+
+  
+#=================
+# Observers (i.e. Microphones)
+#=================
+#OBSERVER NAME=<name> GEOM=POINT x y z
+#OBSERVER NAME=Mic GEOM=POINT 0.0 100.0 0.0
+
+#OBSERVER NAME=<name> GEOM=ARC x rx ntheta
+#OBSERVER NAME=Arc GEOM=ARC 0.0 100.0 36
+
+#OBSERVER NAME=<name> GEOM=ROTATING_ARC x y z rx alpha_min alpha_max nalpha ntheta
+OBSERVER NAME=RotArc GEOM=ROTATING_ARC 0.0 0.0 0.0 100.0 20 160 29 36 
+
+#OBSERVER NAME=<name> GEOM=CART_MESH x0 y0 z0 x1 y1 z1 x2 y2 z2 n0to1 n0to2
+#OBSERVER NAME=CartMesh GEOM=CART_MESH 10.0 0.0 0.0 20.0 0.0 0.0 10.0 10.0 0.0 101 101

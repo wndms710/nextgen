@@ -1,0 +1,8 @@
+# for help with these settings, cd to ctitest and follow instructions
+
+PYTHON = /home/frank/anaconda3/bin/python
+ARCH_PY = linux-x86_64-3.8
+LIB_SUFFIX_PY = cpython-38-x86_64-linux-gnu.so
+CXX_PY = g++
+CXXFLAGS_PY = -pthread -B /home/frank/anaconda3/compiler_compat -Wl,--sysroot=/ -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes -fPIC -I/home/frank/anaconda3/include/python3.8
+LDFLAGS_PY = -pthread -shared -B /home/frank/anaconda3/compiler_compat -L/home/frank/anaconda3/lib -Wl,-rpath=/home/frank/anaconda3/lib -Wl,--no-as-needed -Wl,--sysroot=/

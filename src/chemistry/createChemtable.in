@@ -1,0 +1,49 @@
+CHEMTABLE.TYPE = PREMIXED
+
+# ============================
+# flamelet required  parameters
+# ============================
+CHEMTABLE.FUEL         = CH4:1.0 T:430.0
+CHEMTABLE.OXIDIZER     = O2:1 N2:3.76 T:730
+CHEMTABLE.P            = 20.0e5
+
+# ===============================================
+# flamelet optional parameters  (you can remove these)
+# ===============================================
+CHEMTABLE.MECHANISM    = gri30.xml
+CHEMTABLE.MIXING       = MIXTURE_AVERAGED
+CHEMTABLE.N_FLAMELETS  = 200
+CHEMTABLE.PHI_1        = 0.5
+CHEMTABLE.PHI_2        = 1.5
+CHEMTABLE.LEWIS_NUMBER = 1.0            # Unity Lewis number assumption
+CHEMTABLE.LOGLEVEL     = 0
+CHEMTABLE.SORET        = 0
+
+CHEMTABLE.FLAMELET_GENERATE_INIT      = 0
+CHEMTABLE.FLAMELET_INIT_FILE          = init.premixed.xml
+CHEMTABLE.FLAMELET_GENERATE_PHI1_PHI2 = 0
+
+# =================
+# other parameters
+# =================
+# table name
+CHEMTABLE.NAME = chemtable
+
+#CHEMTABLE.FLAMELET_LIST = FlameletList.txt
+
+# number of points in the progress variable and mixture fraction directions.
+# NOTE: use O(1000) points to properly resolve the density
+CART_CHEMTABLE.nC = 1000
+CART_CHEMTABLE.nZ = 500
+
+# write the table into a tecplot file
+#CHEMTABLE.TECPLOT
+#FLAMELET.TECPLOT
+
+# species to be included in the table
+CHEMTABLE.SPECIES H2O O2 OH CO X_CO2_DRY X_NO_DRY
+
+# progress variable definition
+PROGRESS_VARIABLE.SPECIES+WEIGHTS CO2 1.0 CO 1.0 H2O 1.0 H2 1.0
+
+NOX_MODEL

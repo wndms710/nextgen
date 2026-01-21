@@ -1,0 +1,661 @@
+"\
+\"parameters\": [ \n\
+    { \n\
+      \"name\": \"WRITE_JSON\", \n\
+      \"children\": [ \n\
+        \"NAME\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NAME\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"prefix\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_IMAGE\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"INTERVAL\", \n\
+        \"RGB_MODE\", \n\
+        \"GEOM\", \n\
+        \"CAMERA\", \n\
+        \"TARGET\", \n\
+        \"VAR\", \n\
+        \"MESH_ON_SURFACE\", \n\
+        \"NO_GEOM_BLANKING\", \n\
+        \"SIZE\", \n\
+        \"UP\", \n\
+        \"BLANK\", \n\
+        \"WIDTH\", \n\
+        \"RANGE\", \n\
+        \"HIDE_SUBZONES\", \n\
+        \"HIDE_ZONES\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"INTERVAL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"interval\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RGB_MODE\", \n\
+      \"children\": [ \n\
+        \"DATA\", \n\
+        \"NORMALS\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"DATA\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NORMALS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"GEOM\", \n\
+      \"children\": [ \n\
+        \"Z_PLANE_FRAC\", \n\
+        \"Y_PLANE_FRAC\", \n\
+        \"X_PLANE_FRAC\", \n\
+        \"PLANE_FRAC\", \n\
+        \"PLANE\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"Z_PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"Y_PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"X_PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"nx ny nz frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z nx ny nz\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CAMERA\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TARGET\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"VAR\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"CV_DATA\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"MESH_ON_SURFACE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NO_GEOM_BLANKING\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SIZE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"ni nj\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"UP\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"ex ey ez\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"BLANK\", \n\
+      \"children\": [ \n\
+        \"PLANE\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WIDTH\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"width\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RANGE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"low high\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HIDE_SUBZONES\", \n\
+      \"children\": [ \n\
+        \"ALL\" \n\
+      ], \n\
+      \"args\": \"subzone0,subzone1,...\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ALL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HIDE_ZONES\", \n\
+      \"children\": [ \n\
+        \"ALL\" \n\
+      ], \n\
+      \"args\": \"zone0,zone1,...\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"DXOST_FACTOR\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<O(1) double>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CREASE_ANGLE_DEGREES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<degrees>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NLAYERS_DEFAULT\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<+int>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HCP_DELTA\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"delta\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HCP_X0\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HCP_DX0\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"dx dy dz\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"MODE\", \n\
+      \"children\": [ \n\
+        \"FLUID\", \n\
+        \"SOLID\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"FLUID\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SOLID\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HCP_PACKING\", \n\
+      \"children\": [ \n\
+        \"CART\", \n\
+        \"ROOT3\", \n\
+        \"ROOT2\", \n\
+        \"ONE\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CART\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ROOT3\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ROOT2\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ONE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HCP_WINDOW\", \n\
+      \"children\": [ \n\
+        \"ZONE\", \n\
+        \"BOX\", \n\
+        \"PRISM\", \n\
+        \"TCONE\", \n\
+        \"ELLIPSE_TCONE\", \n\
+        \"ANNULAR_TCONE\", \n\
+        \"ANNULAR_ELLIPSE_TCONE\", \n\
+        \"LEVEL\", \n\
+        \"DELTA\", \n\
+        \"NLAYERS\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ZONE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"name0,name1,...\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"BOX\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x0 x1 y0 y1 z0 z1\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PRISM\", \n\
+      \"children\": [ \n\
+        \"ORTHN\", \n\
+        \"SHEARN\" \n\
+      ], \n\
+      \"args\": \"x0 y0 z0 rM0 rm0 x1 y1 z1 rM1 rm1\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TCONE\", \n\
+      \"children\": [ \n\
+        \"SHEARN\" \n\
+      ], \n\
+      \"args\": \"x0 y0 z0 r0 x1 y1 z1 r1\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ELLIPSE_TCONE\", \n\
+      \"children\": [ \n\
+        \"ORTHN\", \n\
+        \"SHEARN\" \n\
+      ], \n\
+      \"args\": \"x0 y0 z0 rM0 rm0 x1 y1 z1 rM1 rm1\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ANNULAR_TCONE\", \n\
+      \"children\": [ \n\
+        \"SHEARN\" \n\
+      ], \n\
+      \"args\": \"x0 y0 z0 rM0 rm0 x1 y1 z1 rM1 rm1\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ANNULAR_ELLIPSE_TCONE\", \n\
+      \"children\": [ \n\
+        \"ORTHN\", \n\
+        \"SHEARN\" \n\
+      ], \n\
+      \"args\": \"x0 y0 z0 r0M0 r0m0 r0M1 r0m1 x1 y1 z1 r1M0 r1m0 r1M1 r1m1\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ORTHN\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"nx ny nz\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SHEARN\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"nx ny nz\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"LEVEL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"level\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"DELTA\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"delta\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_PBIN\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"filename.pbin\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"COUNT_POINTS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"REPORT_LEVELS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NSMOOTH\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"count\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CLEAR_SMOOTHING\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SMOOTH_LIMIT\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"max-relative-displacement\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SMOOTH_MODE\", \n\
+      \"children\": [ \n\
+        \"BLAYER\", \n\
+        \"TRANSITION\", \n\
+        \"ALL\", \n\
+        \"FORCE_ALL\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"BLAYER\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<int>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TRANSITION\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<int>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"FORCE_ALL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"LOAD_BALANCE_MODE\", \n\
+      \"children\": [ \n\
+        \"POINTS\", \n\
+        \"SURFACE\", \n\
+        \"ALL\", \n\
+        \"X\", \n\
+        \"Y\", \n\
+        \"Z\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"POINTS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SURFACE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"X\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"Y\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"Z\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RANK_BUILD_COST_LIMIT\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"<large int>\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"STATUS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"EXTRACT_TETS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_TLES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"solid.tles\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_HCP_PTS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"points.pbin\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_JOURNAL\", \n\
+      \"children\": [ \n\
+        \"VERBOSE\" \n\
+      ], \n\
+      \"args\": \"journal.in\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"VERBOSE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_PARAMS\", \n\
+      \"children\": [ \n\
+        \"NAME\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_PART\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"mypart.part\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_RESTART_V3\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_RESTART_V4\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_MLES\", \n\
+      \"children\": [ \n\
+        \"NO_SURFACE\" \n\
+      ], \n\
+      \"args\": \"restart.mles\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NO_SURFACE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"QUERY\", \n\
+      \"children\": [ \n\
+        \"PARTS\", \n\
+        \"ZONES\", \n\
+        \"ZONEID\", \n\
+        \"BBOX\", \n\
+        \"HCP_WINDOWS\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PARTS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ZONES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ZONEID\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"id0,id1,...\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"BBOX\", \n\
+      \"children\": [ \n\
+        \"ZONEID\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HCP_WINDOWS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PART\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"SURF\", \n\
+        \"NLAYERS\", \n\
+        \"FLIP\", \n\
+        \"FF\", \n\
+        \"TRANSLATE\" \n\
+      ], \n\
+      \"args\": \"mypart.part\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SURF\", \n\
+      \"children\": [ \n\
+        \"SBIN\", \n\
+        \"BOX\", \n\
+        \"CYLINDER\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CYLINDER\", \n\
+      \"children\": [ \n\
+        \"N\" \n\
+      ], \n\
+      \"args\": \"x0 x1 y0 y1 z0 z1 r\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"N\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"count\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SBIN\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"surface.sbin\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NLAYERS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"n0,n1,...\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TRANSLATE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"dx dy dz\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"FLIP\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"FF\", \n\
+      \"children\": [ \n\
+        \"ZONE\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    } \n\
+  ]\
+"

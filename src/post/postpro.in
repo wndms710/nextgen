@@ -1,0 +1,6 @@
+RESTART ../stitch2/restart.mles
+
+#INTERP_FROM_RESTART /Users/fham/runs/volvo/result.les
+#INTERP_FROM_RESTART /home/ham/runs/7ha02_afs/result.les ROTATE_X (360/12)
+INTERP_FROM_RESTART ../charles/result.00000100.les
+

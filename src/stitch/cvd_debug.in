@@ -1,0 +1,25 @@
+VERBOSE
+
+#CVD_DEBUG cvd_debug-000001.bin cvd_debug_support-000001.bin
+#CVD_DEBUG cvd_debug-000182.bin cvd_debug_support-000182.bin
+#CVD_DEBUG cvd_debug-000172.bin cvd_debug_support-000172.bin
+
+# shoreh's huge mesh issues...
+CVD_DEBUG /home/frank/runs/huge/cvd_debug-000619.bin /home/frank/runs/huge/cvd_debug_support-000619.bin
+
+#
+#rw-------. 1 frank wheel 51951140 May 14 14:39 /home/frank/runs/huge/cvd_debug_support-000619.bin
+#-rw-------. 1 frank wheel 51848196 May 14 14:39 /home/frank/runs/huge/cvd_debug_support-000615.bin
+#-rw-------. 1 frank wheel 53120948 May 14 14:39 /home/frank/runs/huge/cvd_debug_support-000528.bin
+#-rw-------. 1 frank wheel 46020224 May 14 14:39 /home/frank/runs/huge/cvd_debug_support-000023.bin
+#-rw-------. 1 frank wheel     1912 May 14 14:39 /home/frank/runs/huge/cvd_debug-000619.bin
+#-rw-------. 1 frank wheel     3416 May 14 14:39 /home/frank/runs/huge/cvd_debug-000615.bin
+#-rw-------. 1 frank wheel      768 May 14 14:39 /home/frank/runs/huge/cvd_debug-000528.bin
+#-rw-------. 1 frank wheel     3888 May 14 14:39 /home/frank/runs/huge/cvd_debug-000023.bin
+#-rw-------. 1 frank wheel     2969 May 14 14:39 /home/frank/runs/huge/cvd.0619.000619.dat
+#-rw-------. 1 frank wheel     5121 May 14 14:39 /home/frank/runs/huge/cvd.0615.000615.dat
+#-rw-------. 1 frank wheel     1310 May 14 14:39 /home/frank/runs/huge/cvd.0528.000528.dat
+#-rw-------. 1 frank wheel     5691 May 14 14:39 /home/frank/runs/huge/cvd.0023.000023.dat
+#-rw-------. 1 frank wheel 51789816 May 14 14:39 /home/frank/runs/huge/cvd_debug_support-000127.bin
+#-rw-------. 1 frank wheel      880 May 14 14:39 /home/frank/runs/huge/cvd_debug-000127.bin
+#-rw-------. 1 frank wheel     1467 May 14 14:39 /home/frank/runs/huge/cvd.0127.000127.dat

@@ -1,0 +1,595 @@
+"\
+\"parameters\": [ \n\
+    { \n\
+      \"name\": \"RUNTIME\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"hours\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NSTEPS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"total-steps\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TIMESTEP\", \n\
+      \"children\": [ \n\
+        \"CFL\", \n\
+        \"DT\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CFL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"max(cfl)\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"DT\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"timestep\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CHECK_INTERVAL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"n-steps\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_JSON\", \n\
+      \"children\": [ \n\
+        \"NAME\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NAME\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"prefix\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_IMAGE\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"INTERVAL\", \n\
+        \"RGB_MODE\", \n\
+        \"GEOM \", \n\
+        \"CAMERA\", \n\
+        \"TARGET\", \n\
+        \"VAR\", \n\
+        \"MESH_ON_SURFACE\", \n\
+        \"NO_GEOM_BLANKING\", \n\
+        \"SIZE\", \n\
+        \"UP\", \n\
+        \"BLANK\", \n\
+        \"WIDTH\", \n\
+        \"RANGE\", \n\
+        \"HIDE_SUBZONES\", \n\
+        \"HIDE_ZONES\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"INTERVAL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"interval\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RGB_MODE\", \n\
+      \"children\": [ \n\
+        \"DATA\", \n\
+        \"NORMALS\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"DATA\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NORMALS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"GEOM \", \n\
+      \"children\": [ \n\
+        \"Z_PLANE_FRAC\", \n\
+        \"Y_PLANE_FRAC\", \n\
+        \"X_PLANE_FRAC\", \n\
+        \"PLANE_FRAC\", \n\
+        \"PLANE\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"Z_PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"Y_PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"X_PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANE_FRAC\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"nx ny nz frac\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z nx ny nz\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CAMERA\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TARGET\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"VAR\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"CV_DATA\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"MESH_ON_SURFACE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"NO_GEOM_BLANKING\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SIZE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"ni nj\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"UP\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"ex ey ez\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"BLANK\", \n\
+      \"children\": [ \n\
+        \"PLANE\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WIDTH\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"width\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RANGE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"low high\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HIDE_SUBZONES\", \n\
+      \"children\": [ \n\
+        \"ALL\" \n\
+      ], \n\
+      \"args\": \"subzone0,subzone1,...\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ALL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"HIDE_ZONES\", \n\
+      \"children\": [ \n\
+        \"ALL\" \n\
+      ], \n\
+      \"args\": \"zone0,zone1,...\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"STOP\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"STOP!\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_PARAMS\", \n\
+      \"children\": [ \n\
+        \"NAME\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"VERBOSE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"RESET_STATS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"FLUSH_PROBES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"FLUSH_IMAGES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_RESULT\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"INTERVAL\" \n\
+      ], \n\
+      \"args\": \"result.sles\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_SNAPSHOT\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"VARS\", \n\
+        \"INTERVAL\" \n\
+      ], \n\
+      \"args\": \"filename.snap\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"VARS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"var1 var2 var3 ...\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"WRITE_DATA\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"VARS\", \n\
+        \"FORMAT\", \n\
+        \"GEOM\", \n\
+        \"INTERVAL\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"GEOM\", \n\
+      \"children\": [ \n\
+        \"ISO\", \n\
+        \"UNDER_ISO\", \n\
+        \"SPHERE\", \n\
+        \"IN_SPHERE\", \n\
+        \"PLANE_X\", \n\
+        \"PLANE_Y\", \n\
+        \"PLANE_Z\", \n\
+        \"PLANE\", \n\
+        \"IN_BOX\", \n\
+        \"CYL_X\", \n\
+        \"CYL_Y\", \n\
+        \"CYL_Z\", \n\
+        \"CYL\", \n\
+        \"IN_CYL\", \n\
+        \"TCONE_X\", \n\
+        \"TCONE_Y\", \n\
+        \"TCONE_Z\", \n\
+        \"TCONE\", \n\
+        \"TCONE_CAPS\", \n\
+        \"IN_TCONE\", \n\
+        \"LP\", \n\
+        \"FAZONE\", \n\
+        \"SBIN\", \n\
+        \"IN_SBIN\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"ISO\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"var-name var-value\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"UNDER_ISO\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"var-name var-value\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SPHERE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z r\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"IN_SPHERE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z r\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z nx ny nz\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANE_X\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANE_Y\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"y\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PLANE_Z\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"z\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CYL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z nx ny nz r\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"IN_CYL\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z nx ny nz r\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CYL_X\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"r\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CYL_Y\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"r\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CYL_Z\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"r\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TCONE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x0 y0 z0 r0 x1 y1 z1 r1\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TCONE_CAPS\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x0 y0 z0 r0 x1 y1 z1 r1\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"IN_TCONE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x0 y0 z0 r0 x1 y1 z1 r1\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TCONE_X\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x0 r0 x1 r1\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TCONE_Y\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"y0 r0 y1 r1\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"TCONE_Z\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"z0 r0 z1 r1\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"LP\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"FAZONE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"zone1 zone2 zone3 ...\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SBIN\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"filename.sbin\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"IN_SBIN\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"filename.sbin\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"FORMAT\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"TECPLOT,VTK,PVTK, or ENSIGHT\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PROBE\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"VARS\", \n\
+        \"SNAP_TO_SURFACE\", \n\
+        \"SNAP_FAZONES\", \n\
+        \"GEOM  \", \n\
+        \"INTERVAL\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"GEOM  \", \n\
+      \"children\": [ \n\
+        \"POINT\", \n\
+        \"LINE\", \n\
+        \"CIRCLE_XRN\", \n\
+        \"FILE\", \n\
+        \"SURFACE_WALK\", \n\
+        \"SURFACE_SLICE\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"POINT\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"LINE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x0 y0 z0 x1 y1 z1 np\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CIRCLE_XRN\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x r np\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"FILE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"filename\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SURFACE_WALK\", \n\
+      \"children\": [ \n\
+        \"X_SEED\", \n\
+        \"DIRECTION\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"X_SEED\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"x y z\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"DIRECTION\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"nx ny nz\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SURFACE_SLICE\", \n\
+      \"children\": [ \n\
+        \"FAZONE\" \n\
+      ], \n\
+      \"args\": \"x y z nx ny nz\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SNAP_TO_SURFACE\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"SNAP_FAZONES\", \n\
+      \"children\": [ \n\
+      ], \n\
+      \"args\": \"zone1,zone2,zone3...\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"MULTIFLUX_PROBE\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"INTERVAL\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"VOLUMETRIC_PROBE\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"INTERVAL\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"PDF_PROBE\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"INTERVAL\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    }, \n\
+    { \n\
+      \"name\": \"CONDITIONAL_PROBE\", \n\
+      \"children\": [ \n\
+        \"NAME\", \n\
+        \"INTERVAL\" \n\
+      ], \n\
+      \"args\": \"\" \n\
+    } \n\
+  ]\
+"

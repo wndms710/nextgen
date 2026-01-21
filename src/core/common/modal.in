@@ -1,0 +1,26 @@
+
+# modal will likely be run twice.  first to build the correlation 
+# matrix and computue the frequencies and amplitudes.
+
+# for the first pass... 
+SNAPSHOT_MODES NAME pressure/snap_p START 2571000 STEP 1000 END 2580000 VAR p 
+
+# this is possible on the first pass, although you may not know what frequencies
+# to request (or what is dominant); for that check the freq_amp.dat file that's
+# generated
+#WRITE_DMD_MODE FREQUENCY 128
+
+
+# on the second pass, you can optionally specify a cached correlation matrix
+# that was written out from the first iteration.  if you don't it will build 
+# the data correlation matrix again (which may be costly).  you can then 
+# specify write modes and it will dump the mode that's closest frequency to 
+# what is specified
+# you can specify multiple WRITE_DMD_MODE and you could have done it on the 
+# first pass as well.. 
+
+# needs to be specified on both iteration...
+#SNAPSHOT_MODES NAME pressure/snap_p START 2571000 STEP 1000 END 2580000 VAR p 
+
+#CORRELATION_MATRIX A.dat
+#WRITE_DMD_MODE FREQUENCY 128

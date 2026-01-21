@@ -1,0 +1,84 @@
+#
+VERBOSE
+
+DEFINE check = 20
+DEFINE this_gamma 1.4
+DEFINE this_pref 1e5
+DEFINE Ugx 200.0
+DEFINE rhog 0.18 
+DEFINE this_Tref 2000
+DEFINE this_Twall 1300
+
+RESTART ../stitch/vki.50k.mles
+#RESTART=/home/miladm/SAND_Lynn/vki/stitch2/restart_Nz10_100k_new.mles result_ig.00010000.sles
+#RESTART=/home/miladm/SAND_Lynn/vki/stitch2/restart_Nz10_100k_new.mles result_3um.00020000.sles
+#RESTART=/home/miladm/SAND_Lynn/vki/stitch2/restart_Nz10_100k_new.mles result_10um.00020000.sles
+#RESTART=/home/miladm/SAND_Lynn/vki/stitch2/restart_Nz10_100k_new.mles result_30um.00020000.sles
+#RESTART=/home/miladm/SAND_Lynn/vki/stitch2/restart_Nz10_100k.mles
+
+# Initial condition specification:
+INIT_RUP $(rhog) $(Ugx) 0 0 $(this_pref)
+
+CHECK_INTERVAL=$(check)
+#NSTEPS = 10
+
+TIMESTEP CFL=1
+
+# specification of the sub-gridscale model:
+SGS_MODEL=VREMAN
+
+# Specification of gas properties:
+# the following parameters require specification
+EOS = IDEAL_GAS_LSP
+#EOS = IDEAL_GAS
+P_REF $(this_pref)
+RHO_REF $(rhog)
+T_REF $(this_Tref)
+MU_REF 1.8E-5
+
+#inlet CBC_TOTAL_PT 2.2e5 2000 0.1 # what is appropriate t_relax?
+inlet INFLOW_TURB PROFILE CONSTANT_UTKETP $(Ugx) 0 0 20 $(this_Tref) $(this_pref) L 0.05 UN $(Ugx)
+outlet NSCBC_OUTLET_P 0.8e5 0.15 0.4 #101325 0.15 0.4 
+wall_blade WALL_ISOTHERMAL $(this_Twall)
+wall_blade_te WALL_ISOTHERMAL $(this_Twall)
+bars WALL_ISOTHERMAL $(this_Twall)
+
+# ====================
+# lsp settings
+# ====================
+LSP.TIME_INT 2WAY_COUPLED
+LSP.INIT NONE
+#LSP.INIT RANDOM 7e-4
+#LSP.AGGLEM 10000 1000
+LSP.MATERIAL SOLID DUST
+#LSP.MATERIAL LIQUID HEXANE_MHB98
+LSP.PLANE_TRASH exit1 X 0.1 -0.1436 0.0321 N 1 0 0 R 0.1
+DP_MAG = 400
+#DP_MAG = 130
+#DP_MAG = 40
+
+
+# ===================
+# Breakup model
+# ===================
+BREAKUP_MODEL NO_BREAKUP
+#BREAKUP_MODEL SBM WEBER_CRITICAL 6
+
+# =================
+# injector setting
+# =================
+#LSP.INJECTOR inj0 GEOM POINT X -0.102 0.034 0.0375 V 0 100  0 TYPE COUNT 1 DIST UNIFORM 2e-3 TP 2000
+#LSP.INJECTOR inj_mdot GEOM POINT X -0.102 0.02 0.0375 V 100 0 0 TYPE COUNT 1 DIST UNIFORM 2e-5 TP 320
+#LSP.INJECTOR inj_mdot_rand GEOM BOX X -0.052 -0.052 -0.0185 0.0355 0.02 0.045 V 100 0 0 TYPE MDOT 2e-5 DIST RR 3.5e-6 50e-6 29e-6 2 1 TP $(this_Tref)
+#LSP.INJECTOR inj_mdot_small GEOM BOX X -0.052 -0.052 -0.0198 0.0368 0.0191 0.047 V 100 0 0 TYPE MDOT 5e-7 DIST UNIFORM 3e-6 TP $(this_Tref)
+#LSP.INJECTOR inj_mdot_medium GEOM BOX X -0.052 -0.052 -0.0185 0.0355 0.02 0.045 V 100 0 0 TYPE MDOT 1e-5 DIST UNIFORM 10e-6 TP $(this_Tref)
+LSP.INJECTOR inj_mdot_large GEOM BOX X -0.052 -0.052 -0.0198 0.0368 0.0191 0.047 V 100 0 0 TYPE MDOT 2e-4 DIST UNIFORM 30e-6 TP $(this_Tref)
+#LSP.INJECTOR inj_mdot_rand GEOM BOX X -0.052 -0.052 -0.017 0.033 0.0075 0.0175 V 100 0 0 TYPE MDOT 2e-5 DIST RR 3.5e-6 50e-6 29e-6 2 1 TP $(this_Tref)
+
+#WRITE_IMAGE NAME=images/magU INTERVAL $(check) GEOM=Z_PLANE_FRAC 0.1 VAR=mag(u) SIZE 1980 1020
+#WRITE_IMAGE NAME=images/p INTERVAL $(check) GEOM=Z_PLANE_FRAC 0.1 VAR=p SIZE 1980 1020
+#WRITE_IMAGE NAME=images/T INTERVAL $(check) GEOM=Z_PLANE_FRAC 0.1 VAR=T SIZE 1980 1020
+#WRITE_IMAGE NAME=images/rho INTERVAL $(check) GEOM=Z_PLANE_FRAC 0.1 VAR=rho SIZE 1980 1020 RANGE 0.15 0.22
+
+#WRITE_RESULT = NAME result_30um INTERVAL 10000
+FLUSH_IMAGES 1

@@ -1,0 +1,24 @@
+VERBOSE
+
+# ================
+# parts
+# ================
+
+PART main SURF BIN assets/multi_vor.sbin SCALE 1.0 0.1 1.0 
+#PART main SURF BIN assets/multi_vor.sbin 
+#SCALE 1 5 1 PTS HCP 
+
+#HCP_PACKING CART
+HCP_DELTA 0.075
+
+NSMOOTH 1
+#SMOOTH_LIMIT 0
+#NSMOOTH 5
+
+#WRITE_IMAGE NAME=all SIZE=2000 2000 VAR=mesh MESH_ON_SURFACE 
+#WRITE_IMAGE NAME=x0 GEOM=PLANE 0.0 0.0 0.0 0.0 1.0 0.0 SIZE=1000 1000 VAR=mesh
+#MESH_ON_SURFACE
+
+COMPUTE_NEW_OPS
+
+

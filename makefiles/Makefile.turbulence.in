@@ -1,0 +1,39 @@
+# Makefile.turbulence.in
+# makefile for the cluster in cascade
+
+# Archiving commands to create, index, and extract
+AR =   ar rv
+RANLIB =  ar -ts
+EXTRACT =	ar -x
+
+PNG_ROOT = /opt/ohpc/pub/libs/libpng/gnu/1.6.27/
+PNG_INC = -I$(PNG_ROOT)/include/
+PNG_LIB = -L$(PNG_ROOT)/lib/ -lpng -lz
+
+CANTERA_HOME ?= /opt/ohpc/pub/libs/cantera/
+
+# compiler
+CXX = mpicxx
+
+CXXFLAGS = -O2 -g 
+CXXFLAGS +=  -DCTI_VERBOSE3 -DWITH_SHM
+CXXFLAGS +=  -Wno-write-strings
+CXXFLAGS += $(PNG_INC) -DWITH_PNG 
+
+CLIBS +=  $(PNG_LIB)
+CLIBS += -lrt
+
+# for serial tools 
+CXX_NO_MPI=	g++
+
+CXXFLAGS_NO_MPI= -O2 -g $(PNG_INC) -DWITH_PNG
+CLIBS_NO_MPI= $(PNG_LIB)
+
+
+# for no mpi mode
+ifeq "$(mpi)$" "0"
+	CXXFLAGS+=-DNO_MPI
+	CXX = $(CXX_NO_MPI)
+endif
+
+

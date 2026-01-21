@@ -1,0 +1,47 @@
+# ================
+# parts
+# ================
+
+DEFINE LX 10
+DEFINE NX 32
+DEFINE NY 32
+DEFINE NZ 2
+
+# root 3 - truncated octahedron (default) 
+#HCP_PACKING ROOT3
+#DEFINE DELTA ($(LX)/$(NX))
+#DEFINE LY ($(NY)*$(DELTA)*sqrt(3.0)/2.0)
+#DEFINE LZ ($(NZ)*$(DELTA)*sqrt(3.0)/2.0)
+
+HCP_PACKING ROOT2
+DEFINE DELTA ($(LX)/$(NX)/pow(3.0/2.0,1.0/3.0))
+DEFINE LY ($(LX)/$(NX)*$(NY)*sqrt(2.0)/2.0)
+DEFINE LZ ($(LX)/$(NX)*$(NZ)*sqrt(2.0)/2.0)
+
+#HCP_PACKING ONE
+#DEFINE DELTA ($(LX)/$(NX)/pow(3.0,1.0/3.0))
+#DEFINE LY ($(LX)/$(NX)*$(NY)*1.0/2.0)
+#DEFINE LZ ($(LX)/$(NX)*$(NZ)*1.0/2.0)
+
+# cart
+#HCP_PACKING CART
+#DEFINE DELTA ($(LX)/$(NX))
+#DEFINE LY ($(NY)*$(DELTA))
+#DEFINE LZ ($(NZ)*$(DELTA))
+
+HCP_DELTA = $(DELTA)
+
+# triply periodic
+PART main SURF SIMPLE_BOX -$(LX) $(LX) -$(LY) $(LY) -$(LZ) $(LZ) PERIODIC_X PERIODIC_Y PERIODIC_Z 
+HCP_DX0 $(DELTA)*1.0E-4 $(DELTA)*1.0E-4 $(DELTA)*1.0E-4 
+
+# the patch
+#HCP_WINDOW GEOM BOX 0 2.5 0 2.5 -5 5 LEVEL 1
+
+# transition
+#HCP_WINDOW GEOM BOX 0 20 -20 20 -5 5 LEVEL 1
+  
+NSMOOTH 0
+
+#INTERACTIVE
+WRITE_MLES euler-32x32x2-root2.mles
