@@ -16,7 +16,7 @@ DOCS_VERSION ?= master
 #
 CTI_DEFS=	Defs.hpp ByteSwap.hpp
 
-default:	testStaticSolver
+default:	libcti_core.a
 
 
 ####################################################################################################

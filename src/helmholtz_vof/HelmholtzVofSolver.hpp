@@ -161,6 +161,9 @@ public:
   double sos0;
   double sos1;
 
+  double *rhs_rhoY0;
+  double *rhs_rhoY1;
+
   list<LiquidFlux> liquidFluxList; // liquid flux list
 
   HelmholtzVofSolver() {
@@ -203,6 +206,12 @@ public:
     fgr1    =NULL; registerCvData(fgr1      , "fgr1"      , CAN_WRITE_DATA);
     cfl2     =NULL; registerCvData(cfl2      , "cfl2"      , CAN_WRITE_DATA);
 
+    rhs_rhoY0 = NULL; registerCvData(rhs_rhoY0 , "rhs_rhoY0" , CAN_WRITE_DATA);
+    rhs_rhoY1 = NULL; registerCvData(rhs_rhoY1 , "rhs_rhoY1" , CAN_WRITE_DATA);
+    
+    
+    cv_flag      = NULL; registerCvData(cv_flag      , "cv_flag"      , READWRITE_DATA);
+
     dudx = NULL;
     sp_dpdx  = NULL;   registerCvData(sp_dpdx   , "sp_dpdx"    , READWRITE_DATA);
     div = NULL;
@@ -212,7 +221,7 @@ public:
     plic_xc = NULL;
     plic_area = NULL;
 
-    cv_flag = NULL;
+    //cv_flag = NULL;
 
     nftb = 0;
     fa_ftb = NULL;
@@ -367,10 +376,13 @@ public:
     DELETE(dudx);
     DELETE(sp_dpdx);
     DELETE(div);
-    DELETE(cv_flag);
+    //DELETE(cv_flag);
 
     DELETE(beta);
     DELETE(iband);
+
+    DELETE(rhs_rhoY0);
+    DELETE(rhs_rhoY1);
 
     am = NULL;
     FOR_BCZONE delete *it;
@@ -528,6 +540,9 @@ public:
     assert(beta == NULL); beta = new double[ncv_g];
     assert(iband == NULL); iband = new int[ncv_g];
 
+    assert(rhs_rhoY0 == NULL); rhs_rhoY0 = new double[ncv];
+    assert(rhs_rhoY1 == NULL); rhs_rhoY1 = new double[ncv];
+
     am = NULL;
 
 
@@ -611,6 +626,8 @@ public:
     FOR_BCZONE (*it)->initialHook();
   }
 
+  bool b_init;
+
   void initComplete() {
 
     // if we do not have the rho/mu_lam fields, then initialize the rho/mu_lam fields from the vof field...
@@ -685,7 +702,9 @@ public:
       if(getBoolParam("SOLVER",true)) {
         if (incomp) calcVof();
         else solveEqmState(0.0);
+        b_init = false;
         solvePAndCorrectU();
+        b_init = true;
       }
       dt = dt_copy;
       FOR_ICV_G FOR_I3 u[icv][i] = u_copy[icv][i];
@@ -732,6 +751,11 @@ public:
 
     // report mass and momentum...
     //processLiquidFlux();
+
+    FOR_ICV {
+      rhs_rhoY0[icv] = 0.0;
+      rhs_rhoY1[icv] = 0.0;
+    }
 
     report();
 
@@ -870,7 +894,7 @@ public:
       solveRho(rhs_rhou, A);
 
       if (incomp) calcVof();
-      else solveEqmState(dt);
+      //else solveEqmState(dt);
 
       updateMu_lam();
       calcSgs();
@@ -1683,13 +1707,13 @@ public:
 
   void calcCurvature() {
 
-    calcCurvatureSignedDistance();
-    //calcCurvatureSimple();
+    //calcCurvatureSignedDistance();
+    calcCurvatureSimple();
     //calcCurvatureDirect();
     
     //calcCurvatureFromG();
-    smoothCurvature();
-    calcCurvatureDirect();
+    //smoothCurvature();
+    //calcCurvatureDirect();
   }
 
   void buildSignedDistance() {
@@ -2067,15 +2091,102 @@ public:
       }
     }
 
+    if (step%check_interval==0) {
+
+      double my_minX = 1e20;
+      double my_maxX = -1e20;
+      double my_minY = 1e20;
+      double my_maxY = -1e20;
+      double my_minZ = 1e20;
+      double my_maxZ = -1e20;
+
+      FOR_ICV {
+        list<double>::iterator it = plicPointList[icv].begin();
+        if (plicPointList[icv].size() > 0) {
+          while (it != plicPointList[icv].end()) {
+              my_minX = min(my_minX, *it); 
+              my_maxX = max(my_maxX, *it); ++it;
+              my_minY = min(my_minY, *it); 
+              my_maxY = max(my_maxX, *it); ++it;
+              my_minZ = min(my_minZ, *it); 
+              my_maxZ = max(my_maxZ, *it); ++it;
+          }
+        }
+      }
+
+      double minX = 1e20;
+      double maxX = -1e20;
+      double minY = 1e20;
+      double maxY = -1e20;
+      double minZ = 1e20;
+      double maxZ = -1e20;
+      MPI_Allreduce(&my_minX, &minX, 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
+      MPI_Allreduce(&my_maxX, &maxX, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+      MPI_Allreduce(&my_minY, &minY, 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
+      MPI_Allreduce(&my_maxY, &maxY, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+      MPI_Allreduce(&my_minZ, &minZ, 1, MPI_DOUBLE, MPI_MIN, MPI_COMM_WORLD);
+      MPI_Allreduce(&my_maxZ, &maxZ, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+      if (mpi_rank==0) cout << "[CHECK] minX = " << minX << ", maxX = " << maxX << endl;
+      if (mpi_rank==0) cout << "[CHECK] minY = " << minY << ", maxY = " << maxY << endl;
+      if (mpi_rank==0) cout << "[CHECK] minZ = " << minZ << ", maxZ = " << maxZ << endl;
+
+
+      int my_npts = 0;
+      int my_max_npts = 0;
+
+      for (int icv = 0; icv < ncv; ++icv) {
+        int size = plicPointList[icv].size();
+        my_npts += size;
+        my_max_npts = max(my_max_npts, size);
+      }
+      int npts = 0;
+      int max_npts = 0;
+      MPI_Allreduce(&my_npts, &npts, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
+      MPI_Allreduce(&my_max_npts, &max_npts, 1, MPI_INT, MPI_MAX, MPI_COMM_WORLD);
+      if (mpi_rank==0) cout << "[CHECK] npts = " << npts/3 << ", max_npts = " << max_npts/3 << endl;
+
+
+      FOR_ICV {
+        if (cv_flag[icv] >= 1 && x_cv[icv][0] > 0.2 && x_cv[icv][0] < 0.8) {
+          //cout << "icv=" << icv << " n=(" << n[icv][0] << "," << n[icv][1] << "," << n[icv][2] << ") g=" << g[icv] << endl;
+        }
+
+      }
+    }
+
     // now calculate centroid...
     FOR_ICV {
       if (cv_flag[icv] >= 1) {
+        if (step%check_interval == 0 && icv == 5880) {
+          cout << "icv=" << icv << " npts=" << int(plicPointList[icv].size()/3) << endl;
+          list<double>::iterator it = plicPointList[icv].begin();
+          while (it != plicPointList[icv].end()) {
+            //cout << "plicPoints.x=" << *(++it) << endl;
+            ++it;
+            cout << "plicPoints.y=" << *(++it) << endl;
+            ++it;
+            //cout << "plicPoints.z=" << *(++it) << endl;
+          }
+          
+        }
         plic_area[icv] = computePointListAreaAndCentroid(plic_xc[icv],plicPointList[icv]);
       }
       else {
         FOR_I3 plic_xc[icv][i] = 0.0;
         plic_area[icv] = 0.0;
       }
+    }
+    if (step%check_interval==0) {
+      double my_area = 0.0;
+      for (int icv = 0; icv < ncv; ++icv) {
+        my_area += plic_area[icv];
+      }
+      double area = 0.0;
+      MPI_Allreduce(&my_area, &area, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+      if (mpi_rank==0) cout << "[CHECK] area = " << area << endl;
+
+      dumpRange(plic_area,ncv,"plic_area");
+
     }
     updateCvData(plic_area);
   }
@@ -2294,8 +2405,8 @@ public:
 
   void calcNormal() {
 
-    calcNormalLeastSquares();
-    //calcNormalSimple();
+    //calcNormalLeastSquares();
+    calcNormalSimple();
     // update normal near the wall
     FOR_BCZONE (*it)->setBc();
 
@@ -2319,7 +2430,7 @@ public:
 
     updateCvData(vof_s);
 
-    dumpRange(vof_s,ncv,"vof_s");
+    //if (step%check_interval == 0) dumpRange(vof_s,ncv,"vof_s");
     StaticSolver::calcCvGrad(n,vof_s);
 
     FOR_ICV {
@@ -2331,7 +2442,7 @@ public:
     }
     updateCvData(n);
 
-    dumpRange(n,ncv,"simple normal");
+    //if (step%check_interval == 0) dumpRange(n,ncv,"simple normal");
     delete[] vof_s;
 
   }
@@ -2469,8 +2580,8 @@ public:
     // compute vof Rhs without/with flux limiter ...
     if (step%check_interval == 0 ) COUT1(" > solve rho");
 
-    double *rhs_rhoY0 = new double[ncv];
-    double *rhs_rhoY1 = new double[ncv];
+    //double *rhs_rhoY0 = new double[ncv];
+    //double *rhs_rhoY1 = new double[ncv];
 
     //reset Rhs
     FOR_ICV {
@@ -2494,8 +2605,8 @@ public:
     updateCvData(rhoY0);
     updateCvData(rho);
 
-    delete[] rhs_rhoY0;
-    delete[] rhs_rhoY1;
+    //delete[] rhs_rhoY0;
+    ///delete[] rhs_rhoY1;
 
   }
 
@@ -2779,7 +2890,7 @@ public:
       double gamma; // blending coeffficient gamma = 0: full upwind, gamma =1 : central
 
       if ( (vof[icv0] > vof_zero && 1.0-vof[icv0] > vof_zero) || (vof[icv1] > vof_zero && 1.0-vof[icv1] > vof_zero)) {
-
+/*
         double dx0[3], dx1[3],dx[3];
         FOR_I3 dx0[i] = x_fa[ifa][i] - x_cv[icv0][i];
         FOR_I3 dx1[i] = x_fa[ifa][i] - x_cv[icv1][i];
@@ -2821,6 +2932,18 @@ public:
        //   if (rho0_out[icv1] > 0.0 ) rhoY0_f = min(rhoY0_f, rhoY0[icv1]/rho0_out[icv1]*rhoY0_f);
        //   if (rho1_out[icv1] > 0.0 ) rhoY1_f = min(rhoY1_f, rhoY1[icv1]/rho1_out[icv1]*rhoY1_f);
         }
+       */
+       if (q_mid >= 0.0)
+       {
+         rhoY0_f = rho0[icv0] * vof[icv0];
+         rhoY1_f = rho1[icv0] * (1.0 - vof[icv0]);
+       }
+       else
+       {
+         rhoY0_f = rho0[icv1] * vof[icv1];
+         rhoY1_f = rho1[icv1] * (1.0 - vof[icv1]);
+       }
+       
       }
       //single-phase cell
       else {
@@ -2848,10 +2971,13 @@ public:
         if (rho1_out[icv1] > rhoY1_1) fgr1_max = 0.5;
       }
       
-      rhoY0_flux = rhoY0_f*q_mid - max(fgr0_max,fgr_avg)*fabs(q_mid)*(rhoY0[icv1]-rhoY0[icv0]);
-      rhoY1_flux = rhoY1_f*q_mid - max(fgr1_max,fgr_avg)*fabs(q_mid)*(rhoY1_1-rhoY1_0);
+      //rhoY0_flux = rhoY0_f*q_mid - max(fgr0_max,fgr_avg)*fabs(q_mid)*(rhoY0[icv1]-rhoY0[icv0]);
+      rhoY0_flux = rhoY0_f*q_mid;
+      //rhoY1_flux = rhoY1_f*q_mid - max(fgr1_max,fgr_avg)*fabs(q_mid)*(rhoY1_1-rhoY1_0);
+      rhoY1_flux = rhoY1_f*q_mid;
       rho_flux = rhoY0_flux + rhoY1_flux;
-      FOR_I3 rhou_flux[i]  =0.5*( 0.5*rho_flux*(u[icv0][i]+u[icv1][i]) - fgr_avg*fabs(rho_flux)*(u[icv1][i]-u[icv0][i]) );  
+      //FOR_I3 rhou_flux[i]  =0.5*( 0.5*rho_flux*(u[icv0][i]+u[icv1][i]) - fgr_avg*fabs(rho_flux)*(u[icv1][i]-u[icv0][i]) );  
+      FOR_I3 rhou_flux[i]  =0.5*( 0.5*rho_flux*(u[icv0][i]+u[icv1][i]) );  
       
       rhs_rhoY0[icv0]           -= rhoY0_flux;
       rhs_rhoY1[icv0]           -= rhoY1_flux;
@@ -2866,8 +2992,10 @@ public:
       const double mf_coeff2 = 0.5*fgr_avg*fabs(rho_flux);
 
       //build Lhs matrix
-      A[coc00] += mf_coeff1 + mf_coeff2;
-      A[coc01] += mf_coeff1 - mf_coeff2;
+      //A[coc00] += mf_coeff1 + mf_coeff2;
+      A[coc00] += mf_coeff1;
+      //A[coc01] += mf_coeff1 - mf_coeff2;
+      A[coc01] += mf_coeff1;
 
       if (icv1 < ncv) {
 
@@ -2878,8 +3006,10 @@ public:
           assert(coc10 != cvocv_i[icv1+1] );
         }
 
-        A[coc11] -= mf_coeff1 - mf_coeff2;
-        A[coc10] -= mf_coeff1 + mf_coeff2;
+        //A[coc11] -= mf_coeff1 - mf_coeff2;
+        A[coc11] -= mf_coeff1;
+        //A[coc10] -= mf_coeff1 + mf_coeff2;
+        A[coc10] -= mf_coeff1;
 
       }
 
@@ -3464,6 +3594,17 @@ public:
 
     if (step%check_interval == 0 ) COUT1(" > solvePAndCorrectU()...");
 
+    // add virtual divergence to u^*...
+    if (b_init) {
+      FOR_ICV_G {
+        u[icv][0] = (2*M_PI*x_cv[icv][0]/1.0)*0.001;
+        u[icv][1] = 0.0;
+        u[icv][2] = 0.0;
+      }
+    } 
+
+    updateCvData(u);
+
     // reset div for n+1
     FOR_ICV div[icv] = 0.0;
 
@@ -3493,13 +3634,12 @@ public:
       //else sp_tension_A_fa = sp_vol_fa*sigma*kappa_fa*(vof[icv1]-vof[icv0])*area_over_delta_fa[ifa];
 
       double u_fa[3]; FOR_I3 u_fa[i] = 0.5*(u[icv0][i]+u[icv1][i]);
-      const double un_A = DOT_PRODUCT(u_fa,n_fa[ifa]) + dt*sp_tension_A_fa;
-      //const double un_A = DOT_PRODUCT(u_fa,n_fa[ifa]);
+      //const double un_A = DOT_PRODUCT(u_fa,n_fa[ifa]) + dt*sp_tension_A_fa;
+      const double un_A = DOT_PRODUCT(u_fa,n_fa[ifa]);
       div[icv0] += un_A;
       if (icv1 < ncv)
         div[icv1] -= un_A;
     }
-
 
     if (!incomp) {
       FOR_BCZONE (*it)->updateBc();
@@ -3519,15 +3659,16 @@ public:
       }
     }
 
-    // check rhs...
-    if (step%check_interval == 0 ) {
+    if (step%check_interval==0){
       dumpRange(div,ncv,"div before correction");
-      //double my_sum = 0.0;
-      //FOR_ICV my_sum += div[icv];
-      //double sum;
-      //MPI_Reduce(&my_sum,&sum,1,MPI_DOUBLE,MPI_SUM,0,mpi_comm);
-      //if (mpi_rank == 0)
-      //cout << " > sum(rhs): " << sum << endl;
+
+      double my_sum = 0.0;
+      FOR_ICV  my_sum += div[icv]*div[icv];
+      double sum;
+      MPI_Reduce(&my_sum,&sum,1,MPI_DOUBLE,MPI_SUM,0,mpi_comm);
+      sum = sqrt(sum)/ncv_global;
+      if (mpi_rank == 0)
+        cout << " > div L2 norm before correction: " << sum << endl;
     }
 
     if (!incomp) {
@@ -3640,7 +3781,7 @@ public:
         }
       case BCGSTAB_SOLVER:
         {
-          solveCvCg(p,A,div,p_zero,p_maxiter,false); // need to replace eventually...
+          solveCvCg2(p,A,div,p_zero,p_maxiter,true); // need to replace eventually...
           break;
         }
       case JACOBI_SOLVER:
@@ -3681,6 +3822,7 @@ public:
 
     // correct u...
     calcSpDpdxandFlux();
+
     FOR_ICV FOR_I3 u[icv][i] -= dt*sp_dpdx[icv][i];
     updateCvData(u);
     
@@ -3698,7 +3840,15 @@ public:
         }
         FOR_BCZONE (*it)->addFlux(div);
         //checkPressure();
-        if (step%check_interval == 0) dumpRange(div,ncv,"div after correction");
+        dumpRange(div,ncv,"div after correction");
+  
+        double my_sum = 0.0;
+        FOR_ICV  my_sum += div[icv]*div[icv];
+        double sum;
+        MPI_Reduce(&my_sum,&sum,1,MPI_DOUBLE,MPI_SUM,0,mpi_comm);
+        sum = sqrt(sum)/ncv_global;
+        if (mpi_rank == 0)
+          cout << " > div L2 norm after correction: " << sum << endl;
       }
     }
     //timer.split("calc div");
@@ -3851,6 +4001,12 @@ public:
       for (int icv = 0; icv < ncv; ++icv)
         my_rho += res[icv]*v[icv];
       MPI_Allreduce(&my_rho, &rho, 1, MPI_DOUBLE, MPI_SUM, mpi_comm);
+
+      if (rho == 0.0) {
+        if ( (mpi_rank == 0) && verbose && step%check_interval == 0) 
+          cout << " > iter, rho = " << iter << "    " << rho << ", escaping..." << endl;
+        break;
+      }
       
       double beta = rho/rho_prev;
       for (int icv = 0; icv < ncv; ++icv)
@@ -3904,8 +4060,8 @@ public:
         res_max = sqrt(res_max)/ncv_global;
         if (mpi_rank == 0) {
           // only share the last half of the convergence behaviour...
-          if (verbose || (iter > maxiter/2))
-            cout << " > solveCvCg iter " << iter << " res_max " << res_max << endl;
+          if ((verbose || (iter > maxiter/2)) && step%check_interval == 0)
+            cout << " > iter, res_max = " << iter << "    " << res_max << endl;
           if (res_max <= zero) {
             //cout << "-> Successfully converged error to " << res_max << endl;
             done = 1;
@@ -4097,7 +4253,8 @@ public:
         }
       }
 
-      const double sp_force_inv_A_fa = -sp_vol_fa*(p[icv1]-p[icv0]-sigma*kappa_fa*(pow(vof[icv1],1)-pow(vof[icv0],1)))*area_over_delta_fa[ifa];
+      //const double sp_force_inv_A_fa = -sp_vol_fa*(p[icv1]-p[icv0]-sigma*kappa_fa*(pow(vof[icv1],1)-pow(vof[icv0],1)))*area_over_delta_fa[ifa];
+      const double sp_force_inv_A_fa = -sp_vol_fa*(p[icv1]-p[icv0])*area_over_delta_fa[ifa];
       //double sp_force_inv_A_fa;
       //const double vof_norm = fabs(vof[icv1]-vof[icv0]);
       //if (vof_norm != 0.0) sp_force_inv_A_fa = -sp_vol_fa*(p[icv1]-p[icv0]-sigma*kappa_fa*(vof[icv1]-vof[icv0])/vof_norm)*area_over_delta_fa[ifa];
@@ -4162,6 +4319,7 @@ public:
                                     (ninjdA_diag[icv][0]*ninjdA_diag[icv][1]-ninjdA_offd[icv][2]*ninjdA_offd[icv][2])*rhs[2] );
 
     }
+
 
     delete[] ninjdA_diag;
     delete[] ninjdA_offd;

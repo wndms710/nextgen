@@ -1,6 +1,474 @@
 #include "HelmholtzVofSolver.hpp"
 #include "BasicPostpro.hpp"
- 
+
+
+class PlanarInterfaceSolver : public HelmholtzVofSolver {
+
+  public:
+  
+      PlanarInterfaceSolver() {}
+  
+  
+      ~PlanarInterfaceSolver() {}
+  
+      void initialHook() {
+  
+          COUT1(" > running plane interface...");
+      
+          const double h = getDoubleParam("DELTA_X", 0.01);
+          //const double h = 0.01;
+  
+          assert(!checkDataFlag("vof"));
+          assert(!checkDataFlag("u"));
+      
+          FOR_ICV_G {
+      
+          // banding
+          const double s = x_cv[icv][0] - 0.5;
+          const double eps = h;
+          if (s <= -eps) vof[icv] = 0.0;
+          else if (s >=  eps) vof[icv] = 1.0;
+          else vof[icv] = 0.5 * (1.0 + s/eps + (1.0/M_PI)*sin(M_PI*s/eps));
+      
+          FOR_I3 u[icv][i] = 0.0;
+          }
+  
+          //calcNormal();
+          //calcGfromVof();
+      }
+  
+      void temporalHook() {
+  
+          if (step%check_interval == 0) {
+      
+          const double e[3] = {1.0,0.0,0.0};
+  
+          int my_N_band = 0;
+          double my_buf[10] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+          my_buf[7] = 1.0e300; my_buf[8] = -1.0e300;
+          FOR_ICV {
+              if (cv_flag[icv] < 1) continue;
+              //if (MAG(n[icv]) < 1.0e-14) continue;
+  
+              const double ndot = fabs(DOT_PRODUCT(n[icv],e));
+  
+              my_buf[0] += pow(vol_cv[icv],1.0/3.0);
+              my_buf[1] += ndot;
+              my_buf[2] += ndot*ndot;
+              my_buf[3] += kappa[icv];
+              my_buf[4] =  max(my_buf[4], fabs(kappa[icv]));
+              my_buf[5] += MAG(n[icv]);
+              my_buf[6] += pow(MAG(n[icv]),2.0);
+              my_buf[7] = min(my_buf[7], ndot);
+              my_buf[8] = max(my_buf[8], ndot);
+  
+              if (DOT_PRODUCT(n[icv],e) < 0.0) my_buf[9] += 1.0;
+  
+              my_N_band++;
+          }
+  
+          int N_band;
+          double buf[10];
+          MPI_Allreduce(&my_N_band, &N_band, 1, MPI_INT, MPI_SUM, mpi_comm);
+          MPI_Allreduce(my_buf, buf, 4, MPI_DOUBLE, MPI_SUM, mpi_comm); 
+          MPI_Allreduce(my_buf + 5, buf + 5, 2, MPI_DOUBLE, MPI_SUM, mpi_comm);
+  
+          MPI_Allreduce(my_buf + 4, buf + 4, 1, MPI_DOUBLE, MPI_MAX, mpi_comm); 
+          MPI_Allreduce(my_buf + 8, buf + 8, 1, MPI_DOUBLE, MPI_MAX, mpi_comm); 
+  
+          MPI_Allreduce(my_buf + 7, buf + 7, 1, MPI_DOUBLE, MPI_MIN, mpi_comm); 
+  
+          MPI_Allreduce(my_buf + 9, buf + 9, 1, MPI_DOUBLE, MPI_SUM, mpi_comm);
+  
+          double n_dot_mean = 0.0;
+          double n_dot_std  = 0.0;
+          double kappa_mean = 0.0;
+          double nmag_mean = 0.0;
+          double nmag_std = 0.0;
+  
+          if (N_band > 0) {
+              n_dot_mean = buf[1] / N_band;
+              const double var = buf[2] / N_band - n_dot_mean * n_dot_mean;
+              n_dot_std  = (var > 0.0) ? sqrt(var) : 0.0;
+  
+              kappa_mean = buf[3] / N_band;
+  
+              nmag_mean = buf[5] / N_band;
+              const double var_nmag = buf[6] / N_band - nmag_mean * nmag_mean;
+              nmag_std  = (var_nmag > 0.0) ? sqrt(var_nmag) : 0.0;
+          }
+  
+          const double dx_bar = (N_band > 0) ? (buf[0] / N_band) : 1.0;
+          const int cnt_neg = (int)(buf[9] + 0.5);
+  
+          if (mpi_rank == 0) {
+          cout << "[TC1] step=" << step
+              << " N_band=" << N_band
+              << " mean(|n·e_ref|)=" << n_dot_mean
+              << " std(|n·e_ref|)=" << n_dot_std
+              << " |n|_mean=" << nmag_mean
+              << " |n|_std=" << nmag_std
+              << " |n|_min=" << buf[7]
+              << " |n|_max=" << buf[8]
+              << " cnt(n·e_ref<0)=" << cnt_neg
+              << " kappa_mean=" << (kappa_mean * dx_bar)
+              << " max(|kappa-kref|)=" << (buf[4] * dx_bar)
+              << endl;
+          }
+        }
+              
+          
+      }
+  };
+  
+  
+  
+  
+  class StaticDropSolver : public HelmholtzVofSolver {
+  public:
+      double kappa_ref;
+  
+      StaticDropSolver() {}
+  
+  
+      ~StaticDropSolver() {}
+  
+      void initialHook() {
+          COUT1(" > running static drop...");
+  
+          assert(!checkDataFlag("vof"));
+          assert(!checkDataFlag("u"));
+      
+          const double radius = getDoubleParam("RADIUS", 0.1);
+          kappa_ref = 2.0/radius;
+          const double xc[3] = {0.5,0.5,0.5};
+      
+          // eps = EPS_FACTOR * h
+          const double epsFactor = getDoubleParam("EPS_FACTOR", 1.0);
+          const double h = getDoubleParam("DELTA_X", 0.01);
+          const double eps = epsFactor * h;
+      
+          if (mpi_rank == 0 ) cout << " >> RADIUS = " << radius << endl; 
+      
+          FOR_ICV_G {
+              const double dx = x_cv[icv][0] - xc[0];
+              const double dy = x_cv[icv][1] - xc[1];
+              const double dz = x_cv[icv][2] - xc[2];
+              const double r  = sqrt(dx*dx + dy*dy + dz*dz);
+              const double s  = r - radius;
+      
+              if (s <= -eps)      vof[icv] = 1.0;
+              else if (s >= eps)  vof[icv] = 0.0;
+              else {
+              // smooth transition: s=-eps -> 1, s=+eps -> 0
+              vof[icv] = 0.5 * (1.0 - s/eps - (1.0/M_PI)*sin(M_PI*s/eps));
+              }
+      
+              u[icv][0] = 0.0;
+              u[icv][1] = 0.0;
+              u[icv][2] = 0.0;
+          }
+  
+          calcNormal();
+          calcGfromVof();
+      }
+  
+    void temporalHook() {
+      if (step%check_interval == 0) {
+    
+        const double xc[3] = {0.5,0.5,0.5};
+    
+        int my_N_band = 0;
+        double my_buf[8] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+        double my_nmag_min = 1.0e300; double my_nmag_max = -1.0e300;
+        int my_cnt_neg_align = 0;
+    
+        // --- added for kappa extremes / spikes ---
+        double my_kappa_min =  1.0e300;
+        double my_kappa_max = -1.0e300;
+        double my_max_abs_kerr = 0.0; // max |kappa - kappa_ref|
+    
+        const double eps = 1.0e-15;
+    
+        FOR_ICV {
+          if (cv_flag[icv] < 1) continue;
+    
+          double r[3]; FOR_I3 r[i] = x_cv[icv][i] - xc[i];
+          const double r2 = DOT_PRODUCT(r,r);
+          const double rinv = (r2 > 0.0) ? 1.0/sqrt(r2) : 0.0;
+          const double e_ref[3] = {r[0]*rinv, r[1]*rinv, r[2]*rinv};
+    
+          my_buf[0] += pow(vol_cv[icv],1.0/3.0);
+    
+          const double kap = kappa[icv];
+          my_buf[1] += kap;
+          my_buf[2] += kap*kap;
+          my_buf[3] += kap - kappa_ref;
+          my_buf[4] += (kap - kappa_ref)*(kap - kappa_ref);
+    
+          // --- added: kappa min/max and max abs error ---
+          if (kap < my_kappa_min) my_kappa_min = kap;
+          if (kap > my_kappa_max) my_kappa_max = kap;
+          const double abserr = fabs(kap - kappa_ref);
+          if (abserr > my_max_abs_kerr) my_max_abs_kerr = abserr;
+    
+          my_buf[5] += MAG(n[icv]);
+          my_buf[6] += pow(MAG(n[icv]),2.0);
+    
+          if (MAG(n[icv]) < my_nmag_min) my_nmag_min = MAG(n[icv]);
+          if (MAG(n[icv]) > my_nmag_max) my_nmag_max = MAG(n[icv]);
+    
+          my_buf[7] += fabs(DOT_PRODUCT(n[icv],e_ref));
+          if (DOT_PRODUCT(n[icv],e_ref) < 0.0) my_cnt_neg_align++;
+    
+          my_N_band++;
+        }
+    
+        int N_band;
+        double buf[8];
+        double nmag_min, nmag_max;
+        int cnt_neg_align;
+    
+        // --- added: global kappa stats ---
+        double kappa_min, kappa_max;
+        double max_abs_kerr;
+    
+        MPI_Allreduce(&my_N_band, &N_band, 1, MPI_INT, MPI_SUM, mpi_comm);
+        MPI_Allreduce(my_buf, buf, 8, MPI_DOUBLE, MPI_SUM, mpi_comm);
+    
+        double my_min_for_reduce = (my_N_band > 0) ? my_nmag_min : 1.0e300;
+        double my_max_for_reduce = (my_N_band > 0) ? my_nmag_max : -1.0e300;
+    
+        MPI_Allreduce(&my_min_for_reduce, &nmag_min, 1, MPI_DOUBLE, MPI_MIN, mpi_comm);
+        MPI_Allreduce(&my_max_for_reduce, &nmag_max, 1, MPI_DOUBLE, MPI_MAX, mpi_comm);
+        MPI_Allreduce(&my_cnt_neg_align, &cnt_neg_align, 1, MPI_INT, MPI_SUM, mpi_comm);
+    
+        // --- added: reduce kappa min/max and max abs error ---
+        double my_kmin_for_reduce = (my_N_band > 0) ? my_kappa_min :  1.0e300;
+        double my_kmax_for_reduce = (my_N_band > 0) ? my_kappa_max : -1.0e300;
+        MPI_Allreduce(&my_kmin_for_reduce, &kappa_min, 1, MPI_DOUBLE, MPI_MIN, mpi_comm);
+        MPI_Allreduce(&my_kmax_for_reduce, &kappa_max, 1, MPI_DOUBLE, MPI_MAX, mpi_comm);
+        MPI_Allreduce(&my_max_abs_kerr,   &max_abs_kerr, 1, MPI_DOUBLE, MPI_MAX, mpi_comm);
+    
+        double kappa_mean = 0.0;
+        double err_mean_abs = 0.0;
+        double err_mean_rel = 0.0;
+        double kappa_std = 0.0;
+        double err_L2_abs = 0.0;
+        double err_L2_rel = 0.0;
+        double nmag_mean = 0.0;
+        double nmag_std = 0.0;
+        double abs_align_mean = 0.0;
+    
+        // --- added: dx_band ---
+        double dx_band = 0.0;
+    
+        if (N_band > 0) {
+          dx_band = buf[0] / N_band;
+    
+          kappa_mean   = buf[1] / N_band;
+          const double var_k = buf[2] / N_band - kappa_mean * kappa_mean;
+          kappa_std = (var_k > 0.0) ? sqrt(var_k) : 0.0;
+    
+          err_mean_abs = buf[3] / N_band;
+          err_mean_rel = err_mean_abs / (fabs(kappa_ref) + eps);
+    
+          err_L2_abs = sqrt(buf[4] / N_band);
+          err_L2_rel = err_L2_abs / (fabs(kappa_ref) + eps);
+    
+          nmag_mean = buf[5] / N_band;
+          const double var_n = buf[6] / N_band - nmag_mean * nmag_mean;
+          nmag_std = (var_n > 0.0) ? sqrt(var_n) : 0.0;
+    
+          abs_align_mean = buf[7] / N_band;
+        }
+    
+        if (mpi_rank == 0) {
+          cout << "[TC2] step=" << step
+                << " N_band=" << N_band
+                << " dx_band=" << dx_band
+                << " kappa_ref=" << kappa_ref
+                << " kappa_mean=" << kappa_mean
+                << " err_mean_rel=" << err_mean_rel
+                << " kappa_std_rel=" << (kappa_std / (fabs(kappa_ref) + eps))
+                << " err_L2_rel=" << err_L2_rel
+                << " kappa_min=" << ((N_band>0)? kappa_min : 0.0)
+                << " kappa_max=" << ((N_band>0)? kappa_max : 0.0)
+                << " max(|kappa-kref|)=" << ((N_band>0)? max_abs_kerr : 0.0)
+                << " |n|_mean=" << nmag_mean
+                << " |n|_std="  << nmag_std
+                << " |n|_min="  << ((N_band>0)? nmag_min : 0.0)
+                << " |n|_max="  << ((N_band>0)? nmag_max : 0.0)
+                << " mean(|n·e_ref|)=" << abs_align_mean
+                << " cnt(n·e_ref<0)="  << cnt_neg_align
+                << endl;
+        }
+    } 
+    }
+  };
+
+
+class UniformAdvectionSolver : public HelmholtzVofSolver {
+public:
+
+double M0_init;
+double xcom_init;
+double delta_x;
+
+  UniformAdvectionSolver() {
+  }
+
+  void initData() {
+    HelmholtzVofSolver::initData();
+  }
+
+  void initialHook() {
+    COUT1 (" > running uniform advection...");
+
+		delta_x = getDoubleParam("UNIFORM_DELTA");
+
+		FOR_ICV_G2 {
+			u[icv][0] = 1.0; u[icv][1] = 0.0; u[icv][2] = 0.0;
+
+			double r = sqrt(pow(x_cv[icv][0]-0.3,2.0) + pow(x_cv[icv][1]-0.5,2.0) + pow(x_cv[icv][2]-0.5,2.0));
+
+			if (r < 0.15)
+				vof[icv] = 1.0;
+			else
+				vof[icv] = 0.0;
+
+		}
+
+		// compute M0_init and xcom_init (global)
+		double my_buf[2] = {0.0, 0.0};
+		// my[0]=M0, my[1]=sum(x*rhoY0*V), my[2]=Vsum (optional)
+		FOR_ICV {
+			const double y = rho0_ref*vof[icv];
+			const double V = vol_cv[icv];
+			my_buf[0] += y * V;
+			my_buf[1] += x_cv[icv][0] * y * V;
+		}
+
+		double buf[2] = {0.0,0.0};
+		MPI_Allreduce(my_buf, buf, 2, MPI_DOUBLE, MPI_SUM, mpi_comm);
+
+		M0_init = buf[0];
+		xcom_init = (M0_init > 0.0) ? (buf[1] / M0_init) : 0.0;
+
+		if (mpi_rank == 0) {
+			//cout << std::setprecision(17);
+			cout << " > UNIFORM_ADVECTION init: M0=" << M0_init << " xcom=" << xcom_init << endl;
+		}
+  }
+
+  void temporalHook() {
+
+    if (step % check_interval == 0) {
+  
+      // --- local accumulators ---
+      // buf layout:
+      // 0:M0, 1:M1, 2:SUM(rhs), 3:M2, 4:M3,
+      // 5:Ck1, 6:Sk1, 7:Ck2, 8:Sk2,
+      // 9:H1, 10:H2, 11:rhs_L1
+      double my_buf[12] = {0};
+  
+      double my_min =  1e300;
+      double my_max = -1e300;
+      double my_rhs_linf = 0.0;
+
+      double Lx = 1.0;
+  
+      // pick a few wave numbers (need Lx)
+      const double k1 = 2.0 * M_PI / Lx;
+      const double k2 = 4.0 * M_PI / Lx;
+  
+      FOR_ICV {
+        const double y   = rhoY0[icv];
+        const double V   = vol_cv[icv];
+        const double x   = x_cv[icv][0];
+        const double rhs = rhs_rhoY0[icv];
+  
+        const double yV = y * V;
+  
+        my_buf[0] += yV;          // M0
+        my_buf[1] += x * yV;      // M1
+        my_buf[2] += rhs;         // SUM(rhs)
+        my_buf[3] += x*x * yV;    // M2
+        my_buf[4] += x*x*x * yV;  // M3
+  
+        // Fourier projections
+        my_buf[5] += yV * cos(k1 * x);
+        my_buf[6] += yV * sin(k1 * x);
+        my_buf[7] += yV * cos(k2 * x);
+        my_buf[8] += yV * sin(k2 * x);
+  
+        // deterministic "checksum" weights (sin-based, stable & cheap)
+        const double w1 = sin( (double)(icv + 1) * 12.9898 );
+        const double w2 = sin( (double)(icv + 1) * 78.233  );
+        my_buf[9]  += yV * w1;    // H1
+        my_buf[10] += yV * w2;    // H2
+  
+        // rhs norms
+        my_buf[11] += fabs(rhs) * V;                 // rhs_L1
+        my_rhs_linf = std::max(my_rhs_linf, fabs(rhs)); // rhs_Linf
+  
+        my_min = std::min(my_min, y);
+        my_max = std::max(my_max, y);
+      }
+  
+      // --- global reduce ---
+      double g_buf[12] = {0};
+      double g_min=0.0, g_max=0.0;
+      double g_rhs_linf=0.0;
+  
+      MPI_Allreduce(my_buf, g_buf, 12, MPI_DOUBLE, MPI_SUM, mpi_comm);
+      MPI_Allreduce(&my_min, &g_min, 1, MPI_DOUBLE, MPI_MIN, mpi_comm);
+      MPI_Allreduce(&my_max, &g_max, 1, MPI_DOUBLE, MPI_MAX, mpi_comm);
+      MPI_Allreduce(&my_rhs_linf, &g_rhs_linf, 1, MPI_DOUBLE, MPI_MAX, mpi_comm);
+  
+      const double M0 = g_buf[0];
+      const double M1 = g_buf[1];
+      const double M2 = g_buf[3];
+      const double M3 = g_buf[4];
+  
+      const double xcom = (M0 > 0.0) ? (M1 / M0) : 0.0;
+  
+      // variance & 3rd central moment (1-pass moments)
+      const double ex2 = (M0 > 0.0) ? (M2 / M0) : 0.0;
+      const double ex3 = (M0 > 0.0) ? (M3 / M0) : 0.0;
+      const double var_x = ex2 - xcom * xcom;
+      const double mu3   = ex3 - 3.0 * xcom * ex2 + 2.0 * xcom * xcom * xcom;
+  
+      // expected translation
+      const double ux = 1.0;
+      const double xexp = xcom_init + ux * time;
+      const double dx_rel = fabs(xcom - xexp)/delta_x;
+  
+      // mass error
+      const double dM0 = M0 - M0_init;
+      const double relM0 = fabs(dM0) / std::max(fabs(M0_init), 1e-300);
+  
+      if (mpi_rank == 0) {
+        cout << " > time,relM0,minY0,maxY0,xcom,xexp,|dx|/dx,SUM(rhs),"
+             << "var_x,mu3,"
+             << "Ck1,Sk1,Ck2,Sk2,"
+             << "H1,H2,"
+             << "rhsL1,rhsLinf: "
+             << time << " " << relM0 << " "
+             << g_min << " " << g_max << " "
+             << xcom << " " << xexp << " " << dx_rel << " " << g_buf[2] << " "
+             << var_x << " " << mu3 << " "
+             << g_buf[5] << " " << g_buf[6] << " " << g_buf[7] << " " << g_buf[8] << " "
+             << g_buf[9] << " " << g_buf[10] << " "
+             << g_buf[11] << " " << g_rhs_linf
+             << endl;
+      }
+    }
+  }
+  
+
+};
+
 
 class HsquareSolver : public HelmholtzVofSolver {
 public:
@@ -1801,8 +2269,38 @@ int main(int argc, char* argv[]) {
     CTI_Init(argc,argv,"charles_vof.in");
 
     const bool b_post = checkParam("POST");
-    const bool test_case = checkParam("TEST_CASE");
+    //const bool test_case = checkParam("TEST_CASE");
 
+    string test_case;
+
+    if ( Param * param  = getParam("TEST_CASE")) { 
+
+      test_case = param->getString(0);
+      if ( mpi_rank == 0 ) 
+        cout << " > starting test case: " << test_case << endl;
+    }
+
+    if (test_case == "PLANAR_INTERFACE") {
+      PlanarInterfaceSolver solver;
+      solver.init();
+      solver.run();
+    }
+    else if (test_case == "STATIC_DROP") {
+      StaticDropSolver solver;
+      solver.init();
+      solver.run();
+    }
+    else if (test_case == "UNIFORM_ADVECTION") {
+      UniformAdvectionSolver solver;
+      solver.init();
+      solver.run();
+    }
+    else {
+      HelmholtzVofSolver solver;
+      solver.init();
+      solver.run();
+    }
+/*
     if (b_post) {
       HelmholtzVofSolver solver;
       solver.initMin();
@@ -1818,6 +2316,7 @@ int main(int argc, char* argv[]) {
       solver.init();
       solver.run();
     }
+      */
     
     CTI_Finalize();
 

@@ -4334,9 +4334,11 @@ public:
           }
           else {
             // not tet data, so better be CV data...
-            if ((data_plane == NULL)||(data_plane->getUnindexedTopology() != CV_DATA)||(data_plane->getType() != DN_DATA)) {
-              WUI(WARN,"plane var: " << scene->getVar() << " does not eval to CVDN; skipping\n");
+            if ((data_plane == NULL)||(data_plane->getUnindexedTopology() != CV_DATA)) {
+              if ((data_plane->getType() != DN_DATA) && (data_plane->getType() != IN_DATA)) {
+              WUI(WARN,"plane var: " << scene->getVar() << " does not eval to CVDN or CVIN; skipping\n");
               b_has_plane = false;
+              }
             }
           }
         }
@@ -4366,15 +4368,15 @@ public:
           // "mesh" visualization
           int * index_cv_c = new int[ncv];
           FOR_ICV {
-	    double x_vv_t[3];
-	    scene->coordinateTransform(x_vv_t,x_vv[icv]);
-	    const double dx[3] = DIFF(x_vv_t,geom_plane_xp);
-	    if (fabs(DOT_PRODUCT(dx,unit_np)) <= 2.0*r_vv[icv]) {
-	      FOR_I3 x_vv_c[ncv_c][i] = x_vv[icv][i];
-	      delta_cv_c[ncv_c] = r_vv[icv];
-	      index_cv_c[ncv_c] = 65534-32768;
-	      ++ncv_c;
-	    }
+            double x_vv_t[3];
+            scene->coordinateTransform(x_vv_t,x_vv[icv]);
+            const double dx[3] = DIFF(x_vv_t,geom_plane_xp);
+            if (fabs(DOT_PRODUCT(dx,unit_np)) <= 2.0*r_vv[icv]) {
+              FOR_I3 x_vv_c[ncv_c][i] = x_vv[icv][i];
+              delta_cv_c[ncv_c] = r_vv[icv];
+              index_cv_c[ncv_c] = 65534-32768;
+              ++ncv_c;
+            }
           }
 
           int * ivv_global = new int[ncv_c];
@@ -4391,13 +4393,25 @@ public:
         else {
           // regular CVDN variable
           double * phi_c  = new double[ncv];
-          double * data_ptr = data_plane->getDNptr();
+          double * data_ptr = NULL;
+          int * data_ptr_int = NULL;
+          if (data_plane->getType() == DN_DATA) {
+            data_ptr = data_plane->getDNptr();
+          }
+          else if (data_plane->getType() == IN_DATA) {
+            data_ptr_int = data_plane->getINptr();
+          }
           FOR_ICV {
 	    double x_vv_t[3];
 	    scene->coordinateTransform(x_vv_t,x_vv[icv]);
 	    const double dx[3] = DIFF(x_vv_t,geom_plane_xp);
 	    if (fabs(DOT_PRODUCT(dx,unit_np)) <= 2.0*r_vv[icv]) {
-	      phi_c[ncv_c]            = data_ptr[icv];
+	      if (data_ptr != NULL) {
+	        phi_c[ncv_c] = data_ptr[icv];
+	      }
+	      else if (data_ptr_int != NULL) {
+	        phi_c[ncv_c] = (double)data_ptr_int[icv];
+	      }
 	      FOR_I3 x_vv_c[ncv_c][i] = x_vv[icv][i];
 	      delta_cv_c[ncv_c]       = r_vv[icv];
 	      ++ncv_c;
