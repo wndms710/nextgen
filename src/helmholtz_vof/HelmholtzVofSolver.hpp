@@ -3597,7 +3597,7 @@ public:
     // add virtual divergence to u^*...
     if (b_init) {
       FOR_ICV_G {
-        u[icv][0] = (2*M_PI*x_cv[icv][0]/1.0)*0.01;
+        u[icv][0] = (2*M_PI*x_cv[icv][0]/1.0)*0.001;
         u[icv][1] = 0.0;
         u[icv][2] = 0.0;
       }
