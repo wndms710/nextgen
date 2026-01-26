@@ -3659,6 +3659,14 @@ public:
       }
     }
 
+    if (!incomp) {
+      FOR_ICV {
+        div[icv] -= vol_cv[icv]*pa[icv]/dt;
+      }
+    }
+
+    FOR_ICV div[icv] /= dt;
+
     if (step%check_interval==0){
       dumpRange(div,ncv,"div before correction");
 
@@ -3670,14 +3678,6 @@ public:
       if (mpi_rank == 0)
         cout << " > div L2 norm before correction: " << sum << endl;
     }
-
-    if (!incomp) {
-      FOR_ICV {
-        div[icv] -= vol_cv[icv]*pa[icv]/dt;
-      }
-    }
-
-    FOR_ICV div[icv] /= dt;
 
     //timer.split("calc poisson rhs");
 
@@ -3782,6 +3782,7 @@ public:
       case BCGSTAB_SOLVER:
         {
           solveCvCg2(p,A,div,p_zero,p_maxiter,true); // need to replace eventually...
+          //solveCvCg3(p,A,div,p_zero,p_maxiter,true); // need to replace eventually...
           break;
         }
       case JACOBI_SOLVER:
@@ -3849,6 +3850,24 @@ public:
         sum = sqrt(sum)/ncv_global;
         if (mpi_rank == 0)
           cout << " > div L2 norm after correction: " << sum << endl;
+
+        double my_buf[3] = {0.0,1.0E+100,-1.0E+100};
+          FOR_IFA {
+            const int icv0 = cvofa[ifa][0]; assert((icv0 >= 0)&&(icv0 < ncv));
+            const int icv1 = cvofa[ifa][1]; assert((icv1 >= 0)&&(icv1 < ncv_g));
+            double sp_vol_fa = SP_VOL_FA(rho[icv0], rho[icv1]);
+            my_buf[0] += sp_vol_fa;
+            my_buf[1] = min(my_buf[1],sp_vol_fa);
+            my_buf[2] = max(my_buf[2],sp_vol_fa);
+          }
+          double buf[3];
+          MPI_Allreduce(my_buf,buf,1,MPI_DOUBLE,MPI_SUM,mpi_comm);
+          MPI_Allreduce(my_buf+1,buf+1,1,MPI_DOUBLE,MPI_MIN,mpi_comm);
+          MPI_Allreduce(my_buf+2,buf+2,1,MPI_DOUBLE,MPI_MAX,mpi_comm);
+          if (mpi_rank == 0) {
+            cout << " > invRho min,max,mean " << buf[1] << " " << buf[2] << " " << buf[0]/nfa_global << endl;
+          }
+          
       }
     }
     //timer.split("calc div");
@@ -4054,10 +4073,9 @@ public:
         // compute the max (L-infinity) normalized residual...
         double  my_res_max = 0.0;
         for (int icv = 0; icv < ncv; ++icv)
-          my_res_max += v[icv]*v[icv];
-        double res_max=0.0;
-        MPI_Reduce(&my_res_max, &res_max, 1, MPI_DOUBLE, MPI_SUM, 0, mpi_comm);
-        res_max = sqrt(res_max)/ncv_global;
+          my_res_max = max( my_res_max, fabs(v[icv]) );
+        double res_max;
+        MPI_Reduce(&my_res_max, &res_max, 1, MPI_DOUBLE, MPI_MAX, 0, mpi_comm);
         if (mpi_rank == 0) {
           // only share the last half of the convergence behaviour...
           if ((verbose || (iter > maxiter/2)) && step%check_interval == 0)
@@ -4103,6 +4121,148 @@ public:
     
   }
 
+
+  int solveCvCg3(double * phi,const double * const A,const double * const rhs,const double zero,const int maxiter,const bool verbose) {
+
+    // assume we come in with a consistent initial condition...
+    
+    // we need the following work arrays...
+    
+    double * res      = new double[ncv];
+    double * v        = new double[ncv];
+    double * p        = new double[ncv_g];
+    double * inv_diag = new double[ncv];
+    
+    // initialize...
+    for (int icv = 0; icv < ncv; ++icv)
+      inv_diag[icv] = 1.0/A[cvocv_i[icv]];
+    
+    for (int icv = 0; icv < ncv; ++icv)
+      p[icv] = 0.0;
+    double rho = 1.0;
+    
+    // calculate the residual in rhs format...
+    for (int icv = 0; icv < ncv; ++icv) {
+      res[icv] = rhs[icv] - A[cvocv_i[icv]]*phi[icv];
+      for (int coc = cvocv_i[icv]+1; coc < cvocv_i[icv+1]; ++coc) {
+        const int icv_nbr = cvocv_v[coc];
+        res[icv] -= A[coc]*phi[icv_nbr];
+      }
+    }
+    
+    // diagonal precon/compute normalized residual...
+    for (int icv = 0; icv < ncv; ++icv)
+      v[icv] = res[icv]*inv_diag[icv];
+    
+    int iter = 0;
+    int done = 0;
+    while (done == 0) {
+      
+      ++iter;
+      
+      double rho_prev = rho;
+      if (fabs(rho_prev) < 1.0E-20)
+        rho_prev = -1.0E-20; // -1.0E-20? seems to help
+      
+      double my_rho = 0.0;
+      for (int icv = 0; icv < ncv; ++icv)
+        my_rho += res[icv]*v[icv];
+      MPI_Allreduce(&my_rho, &rho, 1, MPI_DOUBLE, MPI_SUM, mpi_comm);
+
+      if (rho == 0.0) {
+        if ( (mpi_rank == 0) && verbose && step%check_interval == 0) 
+          cout << " > iter, rho = " << iter << "    " << rho << ", escaping..." << endl;
+        break;
+      }
+      
+      double beta = rho/rho_prev;
+      for (int icv = 0; icv < ncv; ++icv)
+        p[icv] = v[icv] + beta*p[icv];
+      updateCvData(p);
+      
+      // v = [Ap]{p}...
+      for (int icv = 0; icv < ncv; ++icv) {
+        v[icv] = A[cvocv_i[icv]]*p[icv];
+        for (int coc = cvocv_i[icv]+1; coc < cvocv_i[icv+1]; ++coc) {
+          const int icv_nbr = cvocv_v[coc];
+          v[icv] += A[coc]*p[icv_nbr];
+        }
+      }
+      
+      double my_gamma = 0.0;
+      for (int icv = 0; icv < ncv; ++icv)
+        my_gamma += p[icv]*v[icv];
+      double gamma;
+      MPI_Allreduce(&my_gamma, &gamma, 1, MPI_DOUBLE, MPI_SUM, mpi_comm);
+      if (fabs(gamma) < 1.0E-20)
+        gamma = 1.0E-20;
+      
+      const double alpha = rho/gamma;
+
+      // update full phi including ghosts...
+      FOR_ICV_G phi[icv] += alpha*p[icv];
+      
+      // check if we are done...
+      if (iter%3 == 0) {
+        
+        // recompute the residual...
+        for (int icv = 0; icv < ncv; ++icv) {
+          res[icv] = rhs[icv] - A[cvocv_i[icv]]*phi[icv];
+          for (int coc = cvocv_i[icv]+1; coc < cvocv_i[icv+1]; ++coc) {
+            const int icv_nbr = cvocv_v[coc];
+            res[icv] -= A[coc]*phi[icv_nbr];
+          }
+        }
+        
+        for (int icv = 0; icv < ncv; ++icv)
+          v[icv] = res[icv]*inv_diag[icv];
+        
+        // compute the max (L-infinity) normalized residual...
+        double  my_res_max = 0.0;
+        for (int icv = 0; icv < ncv; ++icv)
+          my_res_max = max( my_res_max, fabs(v[icv]) );
+        double res_max;
+        MPI_Reduce(&my_res_max, &res_max, 1, MPI_DOUBLE, MPI_MAX, 0, mpi_comm);
+        if (mpi_rank == 0) {
+          // only share the last half of the convergence behaviour...
+          if ((verbose || (iter > maxiter/2)) && step%check_interval == 0)
+            cout << " > iter, res_max = " << iter << "    " << res_max << endl;
+          if (res_max <= zero) {
+            //cout << "-> Successfully converged error to " << res_max << endl;
+            done = 1;
+          }
+          else if (iter > maxiter) {
+            cout << "Warning: solveCvCg did not converge after " << maxiter <<
+              " iters, res_max: " << res_max << endl;
+            done = 2;
+          }
+        }
+        MPI_Bcast(&done, 1, MPI_INT, 0, mpi_comm);
+        
+      }
+      else {
+        
+        for (int icv = 0; icv < ncv; ++icv) {
+          // on the other iterations, use this approximation to update
+          // the unreduced residual...
+          res[icv] -= alpha*v[icv];
+          // still need to compute v, diag precon for next iteration...
+          v[icv] = res[icv]*inv_diag[icv];
+        }
+        
+      }
+      
+    }
+    
+    delete[] res;
+    delete[] v;
+    delete[] p;
+    delete[] inv_diag;
+    
+    // let the calling routine know if we were successful...
+    return( done == 1 );
+    
+  }
 
   void buildLhs(double * A) {
 
