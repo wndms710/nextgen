@@ -1603,8 +1603,92 @@ public:
       else if (test_case == "RTI") {
         temporalHookRTI();
       }
+      else if (test_case == "DROP") {
+        temporalHookDrop();
+      }
     }
 
+  }
+
+  // Static drop / spurious current diagnostic. Mirrors the pds vof solver so
+  // the two can be compared line for line.
+  void temporalHookDrop() {
+
+    const double radius    = getDoubleParam("RADIUS", 0.1);
+    const double kappa_ref = double(getIntParam("DROP_DIM", 3) - 1) / radius;
+    const double dp_theory = sigma * kappa_ref;
+
+    // 0,1: kappa_sum, kappa_err2   2,3: p_in_sum, p_out_sum
+    // 4-6: vof*vol, vof*vol*x, vof*vol*y   7,8: momentum x,y
+    // 9,10: kinetic energy, interface area
+    double my_buf[11] = {0.0};
+    int    my_cnt[3] = {0, 0, 0};   // N_band, n_in, n_out
+    double my_umax = 0.0;
+    double my_pdev_max = -1.0e+20, my_pdev_min = 1.0e+20;
+
+    FOR_ICV {
+      my_umax = max(my_umax, MAG(u[icv]));
+      const double pdev = p[icv] - dp_theory*vof[icv];
+      my_pdev_max = max(my_pdev_max, pdev);
+      my_pdev_min = min(my_pdev_min, pdev);
+      if (vof[icv] >= 1.0-1.0e-6) { my_buf[2] += p[icv]; ++my_cnt[1]; }
+      if (vof[icv] <= 1.0e-6)     { my_buf[3] += p[icv]; ++my_cnt[2]; }
+      if (cv_flag[icv] >= 1) {
+        my_buf[0] += kappa[icv];
+        my_buf[1] += (kappa[icv]-kappa_ref)*(kappa[icv]-kappa_ref);
+        ++my_cnt[0];
+      }
+      const double dv = vol_cv[icv];
+      my_buf[4] += vof[icv]*dv;
+      my_buf[5] += vof[icv]*dv*x_cv[icv][0];
+      my_buf[6] += vof[icv]*dv*x_cv[icv][1];
+      my_buf[7] += rho[icv]*u[icv][0]*dv;
+      my_buf[8] += rho[icv]*u[icv][1]*dv;
+      my_buf[9] += 0.5*rho[icv]*DOT_PRODUCT(u[icv],u[icv])*dv;
+      my_buf[10] += plic_area[icv];
+    }
+
+    double buf[11], umax, pdev_max, pdev_min;
+    int cnt[3];
+    MPI_Allreduce(my_buf, buf, 11, MPI_DOUBLE, MPI_SUM, mpi_comm);
+    MPI_Allreduce(my_cnt, cnt, 3, MPI_INT, MPI_SUM, mpi_comm);
+    MPI_Allreduce(&my_umax, &umax, 1, MPI_DOUBLE, MPI_MAX, mpi_comm);
+    MPI_Allreduce(&my_pdev_max, &pdev_max, 1, MPI_DOUBLE, MPI_MAX, mpi_comm);
+    MPI_Allreduce(&my_pdev_min, &pdev_min, 1, MPI_DOUBLE, MPI_MIN, mpi_comm);
+
+    const double kappa_mean = (cnt[0] > 0) ? buf[0]/cnt[0] : 0.0;
+    const double err_L2_rel = (cnt[0] > 0) ? sqrt(buf[1]/cnt[0])/fabs(kappa_ref) : 0.0;
+    const double dp = ((cnt[1] > 0) ? buf[2]/cnt[1] : 0.0) -
+                      ((cnt[2] > 0) ? buf[3]/cnt[2] : 0.0);
+    const double err_dp_rel = (fabs(dp_theory) > 1.0e-15) ?
+                              fabs(dp - dp_theory)/fabs(dp_theory) : 0.0;
+    const double p_spread_rel = (fabs(dp_theory) > 1.0e-15) ?
+                                (pdev_max - pdev_min)/fabs(dp_theory) : 0.0;
+    const double Ca = (sigma > 0.0) ? mu0_ref*umax/sigma : 0.0;
+    const double xc_vof = (buf[4] > 0.0) ? buf[5]/buf[4] : 0.0;
+    const double yc_vof = (buf[4] > 0.0) ? buf[6]/buf[4] : 0.0;
+    const double dxc = xc_vof - getDoubleParam("XC", 0.0);
+    const double dyc = yc_vof - getDoubleParam("YC", 0.0);
+
+    if (mpi_rank == 0 && step % check_interval == 0) {
+      cout << "DROP step=" << step << " time=" << time
+           << " Ca=" << Ca
+           << " umax=" << umax
+           << " xc=" << xc_vof << " yc=" << yc_vof
+           << " drift=" << sqrt(dxc*dxc + dyc*dyc)
+           << " mom_x=" << buf[7] << " mom_y=" << buf[8]
+           << " E_k=" << buf[9] << " E_s=" << sigma*buf[10]
+           << " kappa_ref=" << kappa_ref
+           << " kappa_mean=" << kappa_mean
+           << " err_L2_rel=" << err_L2_rel
+           << " dp=" << dp
+           << " dp_theory=" << dp_theory
+           << " err_dp_rel=" << err_dp_rel
+           << " p_spread_rel=" << p_spread_rel
+           << " n_in=" << cnt[1] << " n_out=" << cnt[2]
+           << " N_band=" << cnt[0]
+           << endl;
+    }
   }
 
   void initialHookSurfaceWave(){
@@ -1771,13 +1855,22 @@ public:
       COUT1("DropHelmholtzVofSolver:initialHook()");
 
       const double radius = getDoubleParam("RADIUS", 0.1);
-      const double xc[3] = {0.0,0.0,0.0};
+      const int drop_dim  = getIntParam("DROP_DIM", 3);
+      const double xc[3] = { getDoubleParam("XC", 0.0),
+                             getDoubleParam("YC", 0.0),
+                             getDoubleParam("ZC", 0.0) };
 
-      if (mpi_rank == 0 ) cout << " >> RADIUS = " << radius << endl; 
+      if (mpi_rank == 0 ) {
+        cout << " >> RADIUS = " << radius << " DROP_DIM = " << drop_dim << endl;
+        cout << " >> kappa_ref = " << double(drop_dim-1)/radius << endl;
+      }
 
+      // drop_dim=2 keeps the drop a z-invariant cylinder
       FOR_ICV_G {
-        double dx[3] = { x_cv[icv][0]-xc[0], x_cv[icv][1]-xc[1], x_cv[icv][2] - xc[2] };
-        g[icv] = radius - sqrt(dx[0]*dx[0] + dx[1]*dx[1] + dx[2]*dx[2]);
+        const double dx = x_cv[icv][0]-xc[0];
+        const double dy = x_cv[icv][1]-xc[1];
+        const double dz = (drop_dim == 3) ? x_cv[icv][2]-xc[2] : 0.0;
+        g[icv] = radius - sqrt(dx*dx + dy*dy + dz*dz);
         u[icv][0] = 0.0;
         u[icv][1] = 0.0;
         u[icv][2] = 0.0;

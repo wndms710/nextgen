@@ -1690,6 +1690,11 @@ public:
     //calcCurvatureFromG();
     smoothCurvature();
     calcCurvatureDirect();
+
+    // Test knob: replace the computed curvature with the exact value (static
+    // drop only), isolating the balanced-force floor from curvature error.
+    const double kappa_fix = getDoubleParam("KAPPA_FIX", 0.0);
+    if (kappa_fix != 0.0) { FOR_ICV_G kappa[icv] = kappa_fix; }
   }
 
   void buildSignedDistance() {
